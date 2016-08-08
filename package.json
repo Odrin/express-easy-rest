@@ -1,0 +1,52 @@
+{
+  "name": "express-easy-rest",
+  "version": "0.1.0",
+  "description": "express-easy-rest",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Odrin/express-easy-rest.git"
+  },
+  "main": "index.js",
+  "files": [
+    "lib/",
+    "index.js"
+  ],
+  "author": {
+    "name": "Komarov Egor"
+  },
+  "keywords": [
+    "express",
+    "node",
+    "rest",
+    "typescript"
+  ],
+  "scripts": {
+    "test": "gulp test"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "es6-promise": "^3.2.1",
+    "express": "^4.14.0",
+    "reflect-metadata": "^0.1.3"
+  },
+  "devDependencies": {
+    "del": "2.0.2",
+    "dotbin": "^1.0",
+    "dts-generator": "^1.7",
+    "gulp": "^3.9.0",
+    "gulp-help": "^1.6.0",
+    "gulp-inject": "3.0.0",
+    "gulp-jasmine": "^2.0.1",
+    "gulp-sequence": "0.4.1",
+    "gulp-tsconfig-files": "0.0.2",
+    "gulp-tslint": "^3.1",
+    "jasmine": "^2.3.1",
+    "tslint": "^3.14",
+    "typescript": "^1.8.10"
+  },
+  "engines": {
+    "node": ">=2.0.0"
+  },
+  "typings": "./lib/index.d.ts"
+}
