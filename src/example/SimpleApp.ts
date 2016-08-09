@@ -8,20 +8,28 @@ class SimpleApp extends ApplicationInstance {
 
   config(configurator: EasyRestConfig): void {
     configurator.controllers.push(...[SimpleController, BookController]);
-    configurator.handlers.push(simpleHandler);
-    configurator.errorHandlers.push(simpleErrorHandler);
+    configurator.requestHandlers.push(simpleHandler);
+    configurator.errorHandlers.push(...[simpleErrorHandler1, simpleErrorHandler2]);
   }
 
 }
 
-function simpleHandler(req: Request, res: Response, next: NextFunction) {
+function simpleHandler(req: Request, res: Response): boolean {
   console.log('Handle any request here');
-  next();
+  return true;
 }
 
-function simpleErrorHandler(err: any, req: Request, res: Response, next: NextFunction) {
-  console.log(`Handle error here: ${err}`);
-  next(err);
+function simpleErrorHandler1(err: any, req: Request, res: Response): any {
+  console.log(`Log error: ${err}`);
+  return err;
+}
+
+function simpleErrorHandler2(err: any, req: Request, res: Response): any {
+  console.log(`Handle error`);
+
+  res.status(500).send('Sorry, service temporarily unavailable.');
+
+  return false;
 }
 
 export = SimpleApp;

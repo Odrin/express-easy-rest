@@ -22,4 +22,9 @@ export class SimpleController extends Controller {
       field: 'some object field'
     };
   }
+
+  @get('/error')
+  getError(): Object {
+    throw new Error('My test error');
+  }
 }

@@ -100,7 +100,6 @@ export class ControllerDispatcher {
 
     instance._req = req;
     instance._res = res;
-    instance._next = next;
 
     return instance;
   }

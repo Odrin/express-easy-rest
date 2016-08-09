@@ -8,7 +8,6 @@ import {NotFoundResult} from "../controller/action-result/not-found-result";
 export class Controller {
   _req: Request;
   _res: Response;
-  _next: NextFunction;
 
   constructor() {
   }
@@ -19,10 +18,6 @@ export class Controller {
 
   get response(): Response {
     return this._res;
-  }
-
-  get next(): NextFunction {
-    return this._next;
   }
 
   protected ok<T>(data?: any): IActionResult {

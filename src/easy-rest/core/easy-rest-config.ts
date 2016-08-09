@@ -12,6 +12,8 @@ import {IActionOptions} from "../decorators/action/action-options";
 import {IParameterBindingOptions} from "../decorators/binding/parameter-binding-options";
 import {PathBuilder} from "../util/path-builder";
 import {ControllerDispatcher} from "../controller/controller-dispatcher";
+import {IRequestHandler} from "../handlers/request-handler";
+import {IErrorRequestHandler} from "../handlers/error-request-handler";
 
 export class EasyRestConfig {
   static create(appCls: new () => ApplicationInstance): express.Express {
@@ -26,13 +28,13 @@ export class EasyRestConfig {
    */
   controllers: IControllerConstructor[] = [];
   /**
-   * Array of request handlers that will be called before request routing
+   * Array of request request handlers that will be called before request routing
    */
-  handlers: express.RequestHandler[] = [];
+  requestHandlers: IRequestHandler[] = [];
   /**
-   * Array of global api application error handlers
+   * Array of global api application error request handlers
    */
-  errorHandlers: express.ErrorRequestHandler[] = [];
+  errorHandlers: IErrorRequestHandler[] = [];
   /**
    * Array of body parsers. Default is single json body parser.
    * @see {@link http://expressjs.com/en/4x/api.html#req.body}
@@ -57,10 +59,24 @@ export class EasyRestConfig {
   }
 
   private configHandlers() {
-    if (this.handlers.length !== 0) {
-      //noinspection TypeScriptValidateTypes
-      this.express.use(this.handlers);
-    }
+    //TODO: fix
+    //noinspection TypeScriptValidateTypes
+    this.express.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+      try {
+        for (let i = 0; i < this.requestHandlers.length; i++) {
+          let handler = this.requestHandlers[i];
+
+          if (!handler(req, res)) {
+            return;
+          }
+        }
+
+        next();
+      }
+      catch (error) {
+        next(error);
+      }
+    });
   }
 
   private configParsers() {
@@ -71,10 +87,27 @@ export class EasyRestConfig {
   }
 
   private configErrorHandlers() {
-    if (this.errorHandlers.length !== 0) {
-      //noinspection TypeScriptValidateTypes
-      this.express.use(this.errorHandlers);
-    }
+    //TODO: fix
+    //noinspection TypeScriptValidateTypes
+    this.express.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+      try {
+        let error = err;
+        for (let i = 0; i < this.errorHandlers.length; i++) {
+          let handler = this.errorHandlers[i];
+          error = handler(error, req, res);
+
+          if (!error) {
+            next();
+            return;
+          }
+        }
+
+        next(err);
+      }
+      catch (error) {
+        next(error);
+      }
+    });
   }
 
   private configRouter() {
