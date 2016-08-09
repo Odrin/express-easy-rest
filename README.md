@@ -38,6 +38,9 @@ express()
 npm install express-easy-rest
 ```
 
+##Examples
+You can find more examples [here](src/example).
+
 ##Features
 * Controller based structure
 * Fast and easy decorators syntax
