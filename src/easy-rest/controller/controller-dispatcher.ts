@@ -41,12 +41,13 @@ export class ControllerDispatcher {
           next();
         })
         .catch((error) => {
-          res.status(500).json(error);
-          next();
+          res.status(500);
+          next(error);
         });
     }
-    catch (e) {
-      throw e;
+    catch (error) {
+      res.status(500);
+      next(error);
     }
   };
 

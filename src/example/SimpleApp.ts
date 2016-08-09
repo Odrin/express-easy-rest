@@ -21,7 +21,7 @@ function simpleHandler(req: Request, res: Response, next: NextFunction) {
 
 function simpleErrorHandler(err: any, req: Request, res: Response, next: NextFunction) {
   console.log(`Handle error here: ${err}`);
-  next();
+  next(err);
 }
 
 export = SimpleApp;

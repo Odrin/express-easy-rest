@@ -50,8 +50,8 @@ export class EasyRestConfig {
 
     this.configHandlers();
     this.configParsers();
-    this.configErrorHandlers();
     this.configRouter();
+    this.configErrorHandlers();
 
     return this.express;
   }
