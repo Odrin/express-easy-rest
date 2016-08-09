@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import {ApplicationInstance} from "./application-instance";
@@ -7,13 +6,14 @@ import {IControllerOptions} from "../decorators/controller/controller-options";
 import {
   CONTROLLER_OPTIONS_METADATA_KEY, ACTION_DECLARATION_METADATA_KEY,
   ACTION_OPTIONS_METADATA_KEY, ACTION_BINDINGS_METADATA_KEY
-} from "../decorators/metadata-keys";
+} from "../metadata/metadata-keys";
 import {IActionOptions} from "../decorators/action/action-options";
 import {IParameterBindingOptions} from "../decorators/binding/parameter-binding-options";
 import {PathBuilder} from "../util/path-builder";
 import {ControllerDispatcher} from "../controller/controller-dispatcher";
 import {IRequestHandler} from "../handlers/request-handler";
 import {IErrorRequestHandler} from "../handlers/error-request-handler";
+import {Metadata} from "../metadata/metadata";
 
 export class EasyRestConfig {
   static create(appCls: new () => ApplicationInstance): express.Express {
@@ -112,13 +112,13 @@ export class EasyRestConfig {
 
   private configRouter() {
     for (let controller of this.controllers) {
-      let ctrlOptions = <IControllerOptions>Reflect.getMetadata(CONTROLLER_OPTIONS_METADATA_KEY, controller) || {}; //TODO: controller options defaults
-      let actions = <string[]>Reflect.getMetadata(ACTION_DECLARATION_METADATA_KEY, controller.prototype);
+      let ctrlOptions = Metadata.get<IControllerOptions>(CONTROLLER_OPTIONS_METADATA_KEY, controller) || {}; //TODO: controller options defaults
+      let actions = Metadata.get<string[]>(ACTION_DECLARATION_METADATA_KEY, controller.prototype);
 
       for (let action of actions) {
-        let methodOptions = <IActionOptions>Reflect.getMetadata(ACTION_OPTIONS_METADATA_KEY, controller.prototype, action);
-        let bindings = <IParameterBindingOptions[]>Reflect.getMetadata(ACTION_BINDINGS_METADATA_KEY, controller.prototype, action) || [];
-        let returnType = Reflect.getMetadata('design:returntype', controller.prototype, action);
+        let methodOptions = Metadata.get<IActionOptions>(ACTION_OPTIONS_METADATA_KEY, controller.prototype, action);
+        let bindings = Metadata.get<IParameterBindingOptions[]>(ACTION_BINDINGS_METADATA_KEY, controller.prototype, action) || [];
+        let returnType = Metadata.getReturnType(controller.prototype, action);
 
         if (ctrlOptions.basePath && typeof (methodOptions.path) !== 'string') {
           throw new Error(`ApiController string basePath incompatible with ApiMethod RegExp path. ${(<any>controller)['name']}:${action}`);
