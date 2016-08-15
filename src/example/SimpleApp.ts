@@ -14,9 +14,8 @@ class SimpleApp extends ApplicationInstance {
 
 }
 
-function simpleHandler(req: Request, res: Response): boolean {
+function simpleHandler(req: Request, res: Response): void {
   console.log('Handle any request here');
-  return true;
 }
 
 function simpleErrorHandler1(err: any, req: Request, res: Response): any {

@@ -3,5 +3,5 @@ export declare class SimpleController extends Controller {
     constructor();
     hello(name: string): string;
     getObject(name: string): Object;
-    getError(): Object;
+    getError(): void;
 }

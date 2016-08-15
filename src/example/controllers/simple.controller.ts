@@ -24,7 +24,7 @@ export class SimpleController extends Controller {
   }
 
   @get('/error')
-  getError(): Object {
+  getError() {
     throw new Error('My test error');
   }
 }

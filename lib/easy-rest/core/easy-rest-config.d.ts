@@ -13,8 +13,8 @@ export declare class EasyRestConfig {
     parsers: express.RequestHandler[];
     constructor(Cls: new () => ApplicationInstance);
     private create();
-    private configHandlers();
     private configParsers();
+    private configHandlers();
     private configErrorHandlers();
     private configRouter();
 }

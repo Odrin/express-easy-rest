@@ -58,6 +58,14 @@ export class EasyRestConfig {
     return this.express;
   }
 
+  private configParsers() {
+    if (this.parsers.length !== 0) {
+      //TODO: fix
+      //noinspection TypeScriptValidateTypes
+      this.express.use(this.parsers);
+    }
+  }
+
   private configHandlers() {
     //TODO: fix
     //noinspection TypeScriptValidateTypes
@@ -65,10 +73,7 @@ export class EasyRestConfig {
       try {
         for (let i = 0; i < this.requestHandlers.length; i++) {
           let handler = this.requestHandlers[i];
-
-          if (!handler(req, res)) {
-            return;
-          }
+          handler(req, res);
         }
 
         next();
@@ -77,13 +82,6 @@ export class EasyRestConfig {
         next(error);
       }
     });
-  }
-
-  private configParsers() {
-    if (this.parsers.length !== 0) {
-      //noinspection TypeScriptValidateTypes
-      this.express.use(this.parsers);
-    }
   }
 
   private configErrorHandlers() {
