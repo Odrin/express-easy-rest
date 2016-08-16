@@ -1,4 +1,4 @@
-import {Controller} from "../../easy-rest/core/controller";
+import {Controller} from "../../easy-rest/controller/controller";
 import {controller} from "../../easy-rest/decorators/controller/controller";
 import {action} from "../../easy-rest/decorators/action/action";
 import {fromRoute} from "../../easy-rest/decorators/binding/from-route";

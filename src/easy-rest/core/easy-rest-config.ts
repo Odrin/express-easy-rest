@@ -1,7 +1,7 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import {ApplicationInstance} from "./application-instance";
-import {IControllerConstructor} from "./controller";
+import {IControllerConstructor} from "../controller/controller";
 import {IControllerOptions} from "../decorators/controller/controller-options";
 import {
   CONTROLLER_OPTIONS_METADATA_KEY, ACTION_DECLARATION_METADATA_KEY,
@@ -14,6 +14,10 @@ import {ControllerDispatcher} from "../controller/controller-dispatcher";
 import {IRequestHandler} from "../handlers/request-handler";
 import {IErrorRequestHandler} from "../handlers/error-request-handler";
 import {Metadata} from "../metadata/metadata";
+import {Promise} from "es6-promise";
+import {IAuthenticationProvider} from "../security/authentication/authentication-provider";
+import {DefaultAuthenticationProvider} from "../security/authentication/default-authentication-provider";
+import {ContextDataProvider} from "../util/context-data-provider";
 
 export class EasyRestConfig {
   static create(appCls: new () => ApplicationInstance): express.Express {
@@ -42,6 +46,8 @@ export class EasyRestConfig {
    */
   parsers: express.RequestHandler[] = [bodyParser.json()];
 
+  authenticationProvider: IAuthenticationProvider = new DefaultAuthenticationProvider();
+
   constructor(Cls: new () => ApplicationInstance) {
     this.express = express();
     this.instance = new Cls();
@@ -51,11 +57,31 @@ export class EasyRestConfig {
     this.instance.config(this);
 
     this.configHandlers();
+    this.configAuthProvider();
     this.configParsers();
+    this.configAuthProvider();
     this.configRouter();
     this.configErrorHandlers();
 
     return this.express;
+  }
+
+  private configAuthProvider() {
+    //TODO: fix
+    //noinspection TypeScriptValidateTypes
+    this.express.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+      if (!this.authenticationProvider) {
+        ContextDataProvider.setData(req, 'principal', null);
+        return next();
+      }
+
+      this.authenticationProvider.onAuthentication(req, res)
+        .then((principal) => {
+          ContextDataProvider.setData(req, 'principal', principal || null);
+          next();
+        })
+        .catch((error) => next(error));
+    });
   }
 
   private configParsers() {
@@ -70,13 +96,22 @@ export class EasyRestConfig {
     //TODO: fix
     //noinspection TypeScriptValidateTypes
     this.express.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+      if (this.requestHandlers.length === 0) {
+        return next();
+      }
+
       try {
+        let promise: Promise<void> = Promise.resolve();
+
         for (let i = 0; i < this.requestHandlers.length; i++) {
           let handler = this.requestHandlers[i];
-          handler(req, res);
+
+          promise = promise.then(() => handler(req, res));
         }
 
-        next();
+        promise
+          .then(() => next())
+          .catch((error) => next(error));
       }
       catch (error) {
         next(error);
@@ -88,19 +123,22 @@ export class EasyRestConfig {
     //TODO: fix
     //noinspection TypeScriptValidateTypes
     this.express.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+      if (this.errorHandlers.length === 0) {
+        return next(err);
+      }
+
       try {
-        let error = err;
+        let promise: Promise<void> = Promise.resolve(err);
+
         for (let i = 0; i < this.errorHandlers.length; i++) {
           let handler = this.errorHandlers[i];
-          error = handler(error, req, res);
 
-          if (!error) {
-            next();
-            return;
-          }
+          promise.then((error) => handler(error, req, res));
         }
 
-        next(err);
+        promise
+          .then((error) => next(error))
+          .catch((error) => next());
       }
       catch (error) {
         next(error);

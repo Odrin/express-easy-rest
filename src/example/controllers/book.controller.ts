@@ -1,5 +1,5 @@
 import {Promise} from "es6-promise";
-import {Controller} from "../../easy-rest/core/controller";
+import {Controller} from "../../easy-rest/controller/controller";
 import {IActionResult} from "../../easy-rest/controller/action-result/action-result";
 import {fromRoute} from "../../easy-rest/decorators/binding/from-route";
 import {controller} from "../../easy-rest/decorators/controller/controller";

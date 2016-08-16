@@ -1,7 +1,7 @@
 import * as express from "express";
 import {Promise} from "es6-promise";
 import {EasyRestConfig} from "../core/easy-rest-config";
-import {IControllerConstructor} from "../core/controller";
+import {IControllerConstructor} from "./controller";
 import {IParameterBindingOptions} from "../decorators/binding/parameter-binding-options";
 import {DataBinder} from "./data-binder";
 import {IActionResult} from "./action-result/action-result";
@@ -98,8 +98,9 @@ export class ControllerDispatcher {
   private instantiateController(req: express.Request, res: express.Response, next: express.NextFunction) {
     var instance = new this.controllerConctructor();
 
-    instance._req = req;
-    instance._res = res;
+    //TODO: wrap request object
+    instance.requset = req;
+    //TODO: set user object
 
     return instance;
   }

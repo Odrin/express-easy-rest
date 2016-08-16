@@ -1,4 +1,4 @@
-import { Controller } from "../../easy-rest/core/controller";
+import { Controller } from "../../easy-rest/controller/controller";
 export declare class SimpleController extends Controller {
     constructor();
     hello(name: string): string;

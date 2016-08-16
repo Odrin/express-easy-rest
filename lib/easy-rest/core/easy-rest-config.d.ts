@@ -1,6 +1,6 @@
 import * as express from "express";
 import { ApplicationInstance } from "./application-instance";
-import { IControllerConstructor } from "./controller";
+import { IControllerConstructor } from "../controller/controller";
 import { IRequestHandler } from "../handlers/request-handler";
 import { IErrorRequestHandler } from "../handlers/error-request-handler";
 export declare class EasyRestConfig {
