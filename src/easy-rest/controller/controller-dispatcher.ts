@@ -1,6 +1,5 @@
 import * as express from "express";
 import {Promise} from "es6-promise";
-import {EasyRestConfig} from "../core/easy-rest-config";
 import {IControllerConstructor} from "./controller";
 import {IParameterBindingOptions} from "../decorators/binding/parameter-binding-options";
 import {DataBinder} from "./data-binder";
@@ -8,8 +7,7 @@ import {IActionResult} from "./action-result/action-result";
 import {ResponseMessage} from "./action-result/response-message";
 
 export class ControllerDispatcher {
-  constructor(private configurator: EasyRestConfig,
-              private controllerConctructor: IControllerConstructor,
+  constructor(private controllerConctructor: IControllerConstructor,
               private action: string,
               private bindings: IParameterBindingOptions[],
               private returnType: any) {

@@ -14,7 +14,7 @@ export class ContextDataProvider {
     return data;
   }
 
-  static getData<T>(req: Request, key: string, defaultValue?: T = null): T {
+  static getData<T>(req: Request, key: string, defaultValue: T = null): T {
     let data = ContextDataProvider.getDataContainer(req);
     return <T>data[key] || defaultValue;
   }

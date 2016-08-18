@@ -76,12 +76,10 @@ gulp.task('watch', 'Watches ts source files and runs build on change', function 
 });
 
 gulp.task('server-local', [], function () {
-  var easyRest = require('./index');
-  var simpleApp = require('./lib/example/SimpleApp');
-  var app  = easyRest.middleware(simpleApp);
+  var app  = require('./lib/example/index');
 
   express()
-    .use('/api', app)
+    .use('/api', app.middleware())
     .listen(8000);
 
   console.info('Local rest api server running on http://localhost:8000/');
