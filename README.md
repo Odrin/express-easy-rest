@@ -3,17 +3,21 @@ Simple and easy, [express](https://github.com/expressjs/express/) based, charged
 
 ```TypeScript
 class App extends ApplicationInstance {
-  config(configurator: EasyRestConfig): void {
-    configurator.controllers.push(...[BookController])
-  }
+  constructor() {
+      super();
+  
+      this.controllers.push(...[BookController]);
+    }
 }
+
+export = new App();
 ```
 ```TypeScript
-@controller({basePath: '/book'})
-export class BookController extends Controller {
+@Controller({basePath: '/book'})
+export class BookController extends ApiController {
   private books: Book[] = [...];
 
-  @get('/list')
+  @Get('/list')
   getBooks(): Promise<Book[]> {
     return new Promise((resolve: any) => {
       setTimeout(() => resolve(this.books), 3000); // here your async db call or anything else
@@ -23,12 +27,10 @@ export class BookController extends Controller {
 ```
 ```JavaScript
 var express = require('express');
-var easyRest = require('express-easy-rest');
-var myApp = require('./lib/app');
-var middleware  = easyRest.middleware(myApp);
+var app = require('./lib/app');
 
 express()
-  .use('/api', middleware)
+  .use('/api', app.middleware())
   .listen(8000);
 ```
 >Simple things should be simple, complex things should be possible | Alan Kay
