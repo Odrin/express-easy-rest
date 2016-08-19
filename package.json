@@ -1,6 +1,6 @@
 {
   "name": "express-easy-rest",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "express-easy-rest",
   "license": "MIT",
   "repository": {
@@ -16,8 +16,8 @@
     "name": "Komarov Egor"
   },
   "keywords": [
-    "express",
     "node",
+    "express",
     "rest",
     "typescript"
   ],

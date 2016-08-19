@@ -1,27 +1,55 @@
-import {NextFunction, Request, Response} from "express";
+import {Request, Response} from "express";
 import {ApplicationInstance} from "../easy-rest/core/application-instance";
-import {EasyRestConfig} from "../easy-rest/core/easy-rest-config";
 import {SimpleController} from "./controllers/simple.controller";
 import {BookController} from "./controllers/book.controller";
+import {Promise} from "es6-promise";
+import {IPrincipal} from "../easy-rest/security/principal/principal";
+import {IAuthenticationProvider} from "../easy-rest/security/authentication/authentication-provider";
+import {UserController} from "./controllers/user.controller";
 
-class SimpleApp extends ApplicationInstance {
+export class SimpleApp extends ApplicationInstance {
 
-  config(configurator: EasyRestConfig): void {
-    configurator.controllers.push(...[SimpleController, BookController]);
-    configurator.handlers.push(simpleHandler);
-    configurator.errorHandlers.push(simpleErrorHandler);
+  constructor() {
+    super();
+
+    this.controllers.push(...[SimpleController, BookController, UserController]);
+    this.requestHandlers.push(this.simpleHandler);
+    this.errorHandlers.push(...[this.simpleErrorHandler1, this.simpleErrorHandler2]);
+    this.authenticationProvider = this.getAuthProvider();
   }
 
-}
+  simpleHandler(req: Request, res: Response): Promise<void> {
+    console.log('Handle any request here');
+    return Promise.resolve();
+  }
 
-function simpleHandler(req: Request, res: Response, next: NextFunction) {
-  console.log('Handle any request here');
-  next();
-}
+  simpleErrorHandler1(err: any, req: Request, res: Response): Promise<any> {
+    console.log(`Log error: ${err}`);
+    return Promise.resolve(err);
+  }
 
-function simpleErrorHandler(err: any, req: Request, res: Response, next: NextFunction) {
-  console.log(`Handle error here: ${err}`);
-  next();
-}
+  simpleErrorHandler2(err: any, req: Request, res: Response): Promise<any> {
+    console.log(`Handle error`);
 
-export = SimpleApp;
+    res.status(500).send('Sorry, service temporarily unavailable.');
+
+    return Promise.reject(null);
+  }
+
+  private getAuthProvider(): IAuthenticationProvider {
+    return {
+      onAuthentication(req: Request, res: Response): Promise<IPrincipal> {
+        return Promise.resolve<IPrincipal>({
+          identity: {
+            authenticationType: 'form',
+            isAuthenticated: true,
+            name: 'User'
+          },
+          isInRole(role: string): boolean {
+            return false;
+          }
+        });
+      }
+    };
+  }
+}

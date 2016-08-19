@@ -1,2 +1,2 @@
 import "reflect-metadata";
-export declare function get(path?: string): MethodDecorator;
+export declare function Get(path?: string): MethodDecorator;

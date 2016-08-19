@@ -1,12 +1,12 @@
 import "reflect-metadata";
 import {IActionOptions} from "./action-options";
-import {action} from "./action";
+import {Action} from "./action";
 
-export function post(path?: string): MethodDecorator {
+export function Post(path?: string): MethodDecorator {
   let options: IActionOptions = {
     method: 'post',
     path
   };
 
-  return action(options);
+  return Action(options);
 }

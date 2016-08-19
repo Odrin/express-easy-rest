@@ -1,14 +1,13 @@
 import * as express from "express";
-import { EasyRestConfig } from "../core/easy-rest-config";
-import { IControllerConstructor } from "../core/controller";
-import { IParameterBindingOptions } from "../decorators/binding/parameter-binding-options";
+import { IControllerConstructor } from "./controller";
+import { ApplicationInstance } from "../core/application-instance";
 export declare class ControllerDispatcher {
-    private configurator;
+    private instance;
     private controllerConctructor;
     private action;
     private bindings;
-    private returnType;
-    constructor(configurator: EasyRestConfig, controllerConctructor: IControllerConstructor, action: string, bindings: IParameterBindingOptions[], returnType: any);
+    private authorizationFilter;
+    constructor(instance: ApplicationInstance, controllerConctructor: IControllerConstructor, action: string);
     handleRequest: (req: express.Request, res: express.Response, next: express.NextFunction) => void;
     private handleResult(result);
     private isActionResult(object);

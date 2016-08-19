@@ -1,26 +1,60 @@
 import * as express from "express";
 import {Promise} from "es6-promise";
-import {EasyRestConfig} from "../core/easy-rest-config";
-import {IControllerConstructor} from "../core/controller";
+import {IControllerConstructor} from "./controller";
 import {IParameterBindingOptions} from "../decorators/binding/parameter-binding-options";
 import {DataBinder} from "./data-binder";
 import {IActionResult} from "./action-result/action-result";
 import {ResponseMessage} from "./action-result/response-message";
+import {ContextDataProvider} from "../util/context-data-provider";
+import {IPrincipal} from "../security/principal/principal";
+import {ApplicationInstance} from "../core/application-instance";
+import {Metadata} from "../metadata/metadata";
+import {
+  ACTION_BINDINGS_METADATA_KEY, AUTH_ROLES_METADATA_KEY,
+  AUTH_ANONYMOUS_METADATA_KEY
+} from "../metadata/metadata-keys";
+import {AuthorizationFilter} from "../security/authorization/authorization-filter";
 
 export class ControllerDispatcher {
-  constructor(private configurator: EasyRestConfig,
-              private controllerConctructor: IControllerConstructor,
-              private action: string,
-              private bindings: IParameterBindingOptions[],
-              private returnType: any) {
+  private bindings: IParameterBindingOptions[];
+  private authorizationFilter: AuthorizationFilter;
 
-    if (controllerConctructor.prototype[action].length !== bindings.length) {
+  constructor(private instance: ApplicationInstance,
+              private controllerConctructor: IControllerConstructor,
+              private action: string) {
+
+    this.bindings = Metadata.get<IParameterBindingOptions[]>(ACTION_BINDINGS_METADATA_KEY, controllerConctructor.prototype, action) || [];
+
+    if (controllerConctructor.prototype[action].length !== this.bindings.length) {
       throw new Error(`Binding configuration error: ${action}`);
+    }
+
+    //let returnType = Metadata.getReturnType(Controller.prototype, Action);
+    let controllerRoles = Metadata.get(AUTH_ROLES_METADATA_KEY, controllerConctructor);
+    let actionRoles = Metadata.get(AUTH_ROLES_METADATA_KEY, controllerConctructor.prototype, action);
+
+    if (controllerRoles || actionRoles) {
+      //TODO: HttpContext; ActionContext
+      let allowAnonymous = Metadata.get(AUTH_ANONYMOUS_METADATA_KEY, controllerConctructor.prototype, action);
+
+      if (!allowAnonymous) {
+        let roles = []
+          .concat(controllerRoles || [])
+          .concat(actionRoles || [])
+          .filter((value, index, array) => array.indexOf(value) === index);
+
+        this.authorizationFilter = instance.getAuthorizationFilter();
+        this.authorizationFilter.roles = roles;
+      }
     }
   }
 
   handleRequest = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      if (this.authorizationFilter && !this.authorizationFilter.onAuthorization(req, res)) {
+        return next();
+      }
+
       let instance = this.instantiateController(req, res, next);
       let action = <Function>(<any>instance)[this.action];
       let parameters = new DataBinder(req, this.bindings).getParameters();
@@ -41,12 +75,13 @@ export class ControllerDispatcher {
           next();
         })
         .catch((error) => {
-          res.status(500).json(error);
-          next();
+          res.status(500);
+          next(error);
         });
     }
-    catch (e) {
-      throw e;
+    catch (error) {
+      res.status(500);
+      next(error);
     }
   };
 
@@ -97,9 +132,9 @@ export class ControllerDispatcher {
   private instantiateController(req: express.Request, res: express.Response, next: express.NextFunction) {
     var instance = new this.controllerConctructor();
 
-    instance._req = req;
-    instance._res = res;
-    instance._next = next;
+    //TODO: wrap request object
+    instance.requset = req;
+    instance.user = ContextDataProvider.getData<IPrincipal>(req, 'principal');
 
     return instance;
   }

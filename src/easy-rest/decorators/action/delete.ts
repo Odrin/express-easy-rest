@@ -1,12 +1,12 @@
 import "reflect-metadata";
 import {IActionOptions} from "./action-options";
-import {action} from "./action";
+import {Action} from "./action";
 
-export function del(path?: string): MethodDecorator {
+export function Delete(path?: string): MethodDecorator {
   let options: IActionOptions = {
     method: 'delete',
     path
   };
 
-  return action(options);
+  return Action(options);
 }
