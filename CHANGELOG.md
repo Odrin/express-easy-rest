@@ -1,5 +1,5 @@
 <a name="0.2.0"></a>
-# [0.2.0](https://github.com/angular/angular/compare/0.1.0...0.2.0) (2016-08-19)
+# [0.2.0](https://github.com/Odrin/express-easy-rest/compare/0.1.0...0.2.0) (2016-08-19)
 
 ### Bug Fixes
 * error handlers now working
