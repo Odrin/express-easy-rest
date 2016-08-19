@@ -1,7 +1,7 @@
 import { Request } from "express";
 import { IActionResult } from "./action-result/action-result";
 import { IPrincipal } from "../security/principal/principal";
-export declare class Controller {
+export declare class ApiController {
     private _req;
     private _user;
     constructor();
@@ -13,5 +13,5 @@ export declare class Controller {
     protected notFound<T>(data?: any): IActionResult;
 }
 export interface IControllerConstructor {
-    new (): Controller;
+    new (): ApiController;
 }

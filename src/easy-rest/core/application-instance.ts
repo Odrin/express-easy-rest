@@ -149,7 +149,7 @@ export abstract class ApplicationInstance {
 
   private configRouter() {
     for (let controller of this.controllers) {
-      let ctrlOptions = Metadata.get<IControllerOptions>(CONTROLLER_OPTIONS_METADATA_KEY, controller) || {}; //TODO: controller options defaults
+      let ctrlOptions = Metadata.get<IControllerOptions>(CONTROLLER_OPTIONS_METADATA_KEY, controller) || {}; //TODO: Controller options defaults
       let actions = Metadata.get<string[]>(ACTION_DECLARATION_METADATA_KEY, controller.prototype);
 
       for (let action of actions) {

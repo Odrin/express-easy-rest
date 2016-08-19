@@ -1,6 +1,6 @@
 export * from './decorators/action/action';
 export * from './decorators/action/action-options';
-export * from './decorators/action/del';
+export * from './decorators/action/delete';
 export * from './decorators/action/get';
 export * from './decorators/action/post';
 export * from './decorators/action/put';

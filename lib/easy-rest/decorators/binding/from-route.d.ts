@@ -1,1 +1,1 @@
-export declare function fromRoute(propertyKey?: string): ParameterDecorator;
+export declare function FromRoute(propertyKey?: string): ParameterDecorator;

@@ -1,1 +1,1 @@
-export declare function fromBody(propertyKey?: string): ParameterDecorator;
+export declare function FromBody(propertyKey?: string): ParameterDecorator;

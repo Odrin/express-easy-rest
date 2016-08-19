@@ -1,1 +1,1 @@
-export declare function allowAnonymous(): MethodDecorator;
+export declare function AllowAnonymous(): MethodDecorator;

@@ -6,7 +6,7 @@ import {BadRequestResult} from "./action-result/bad-request-result";
 import {NotFoundResult} from "./action-result/not-found-result";
 import {IPrincipal} from "../security/principal/principal";
 
-export class Controller {
+export class ApiController {
   private _req: Request;
   private _user: IPrincipal;
 
@@ -47,5 +47,5 @@ export class Controller {
 }
 
 export interface IControllerConstructor {
-  new (): Controller;
+  new (): ApiController;
 }

@@ -29,7 +29,7 @@ export class ControllerDispatcher {
       throw new Error(`Binding configuration error: ${action}`);
     }
 
-    //let returnType = Metadata.getReturnType(controller.prototype, action);
+    //let returnType = Metadata.getReturnType(Controller.prototype, Action);
     let controllerRoles = Metadata.get(AUTH_ROLES_METADATA_KEY, controllerConctructor);
     let actionRoles = Metadata.get(AUTH_ROLES_METADATA_KEY, controllerConctructor.prototype, action);
 

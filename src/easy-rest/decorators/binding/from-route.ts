@@ -1,6 +1,6 @@
 import {BindingType} from "./binding-type";
 import {bindingDecorator} from "./binding-decorator";
 
-export function fromRoute(propertyKey?: string): ParameterDecorator {
+export function FromRoute(propertyKey?: string): ParameterDecorator {
   return bindingDecorator(BindingType.route, propertyKey);
 }
