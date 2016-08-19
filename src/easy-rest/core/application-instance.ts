@@ -17,6 +17,7 @@ import {Promise} from "es6-promise";
 import {IAuthenticationProvider} from "../security/authentication/authentication-provider";
 import {DefaultAuthenticationProvider} from "../security/authentication/default-authentication-provider";
 import {ContextDataProvider} from "../util/context-data-provider";
+import {AuthorizationFilter} from "../security/authorization/authorization-filter";
 
 export abstract class ApplicationInstance {
   private express: express.Express = express();
@@ -57,8 +58,17 @@ export abstract class ApplicationInstance {
     return this.express;
   }
 
+  /**
+   * Override to use custom auth filter
+   * @return {AuthorizationFilter}
+   */
+  getAuthorizationFilter() {
+    return new AuthorizationFilter();
+  }
+
   private configAuthProvider() {
     //TODO: fix
+    //TODO: 'principal' key constant
     //noinspection TypeScriptValidateTypes
     this.express.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
       if (!this.authenticationProvider) {
@@ -144,15 +154,13 @@ export abstract class ApplicationInstance {
 
       for (let action of actions) {
         let methodOptions = Metadata.get<IActionOptions>(ACTION_OPTIONS_METADATA_KEY, controller.prototype, action);
-        let bindings = Metadata.get<IParameterBindingOptions[]>(ACTION_BINDINGS_METADATA_KEY, controller.prototype, action) || [];
-        let returnType = Metadata.getReturnType(controller.prototype, action);
 
         if (ctrlOptions.basePath && typeof (methodOptions.path) !== 'string') {
           throw new Error(`ApiController string basePath incompatible with ApiMethod RegExp path. ${(<any>controller)['name']}:${action}`);
         }
 
         let path = PathBuilder.build(ctrlOptions.basePath, methodOptions.path, action);
-        let dispatcher = new ControllerDispatcher(controller, action, bindings, returnType);
+        let dispatcher = new ControllerDispatcher(this, controller, action);
 
         (<any>this.express)[methodOptions.method](path, dispatcher.handleRequest);
       }

@@ -3,15 +3,19 @@ import {ApplicationInstance} from "../easy-rest/core/application-instance";
 import {SimpleController} from "./controllers/simple.controller";
 import {BookController} from "./controllers/book.controller";
 import {Promise} from "es6-promise";
+import {IPrincipal} from "../easy-rest/security/principal/principal";
+import {IAuthenticationProvider} from "../easy-rest/security/authentication/authentication-provider";
+import {UserController} from "./controllers/user.controller";
 
 export class SimpleApp extends ApplicationInstance {
 
   constructor() {
     super();
 
-    this.controllers.push(...[SimpleController, BookController]);
+    this.controllers.push(...[SimpleController, BookController, UserController]);
     this.requestHandlers.push(this.simpleHandler);
     this.errorHandlers.push(...[this.simpleErrorHandler1, this.simpleErrorHandler2]);
+    this.authenticationProvider = this.getAuthProvider();
   }
 
   simpleHandler(req: Request, res: Response): Promise<void> {
@@ -32,4 +36,20 @@ export class SimpleApp extends ApplicationInstance {
     return Promise.reject(null);
   }
 
+  private getAuthProvider(): IAuthenticationProvider {
+    return {
+      onAuthentication(req: Request, res: Response): Promise<IPrincipal> {
+        return Promise.resolve<IPrincipal>({
+          identity: {
+            authenticationType: 'form',
+            isAuthenticated: true,
+            name: 'User'
+          },
+          isInRole(role: string): boolean {
+            return false;
+          }
+        });
+      }
+    };
+  }
 }

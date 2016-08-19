@@ -1,12 +1,13 @@
 import * as express from "express";
 import { IControllerConstructor } from "./controller";
-import { IParameterBindingOptions } from "../decorators/binding/parameter-binding-options";
+import { ApplicationInstance } from "../core/application-instance";
 export declare class ControllerDispatcher {
+    private instance;
     private controllerConctructor;
     private action;
     private bindings;
-    private returnType;
-    constructor(controllerConctructor: IControllerConstructor, action: string, bindings: IParameterBindingOptions[], returnType: any);
+    private authorizationFilter;
+    constructor(instance: ApplicationInstance, controllerConctructor: IControllerConstructor, action: string);
     handleRequest: (req: express.Request, res: express.Response, next: express.NextFunction) => void;
     private handleResult(result);
     private isActionResult(object);

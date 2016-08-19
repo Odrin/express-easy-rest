@@ -22,6 +22,13 @@ export class BookController extends Controller {
     });
   }
 
+  @get('/list/private')
+  getPrivateBookList(): Promise<IActionResult> {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(this.ok(BookController.books)), 3000);
+    });
+  }
+
   @get('/:id')
   getBook(@fromRoute('id')id: number): Promise<IActionResult> {
     return new Promise((resolve) => {

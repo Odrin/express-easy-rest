@@ -6,4 +6,5 @@ export declare class SimpleApp extends ApplicationInstance {
     simpleHandler(req: Request, res: Response): Promise<void>;
     simpleErrorHandler1(err: any, req: Request, res: Response): Promise<any>;
     simpleErrorHandler2(err: any, req: Request, res: Response): Promise<any>;
+    private getAuthProvider();
 }

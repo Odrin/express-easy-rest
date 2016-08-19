@@ -3,6 +3,7 @@ import { IControllerConstructor } from "../controller/controller";
 import { IRequestHandler } from "../handlers/request-handler";
 import { IErrorRequestHandler } from "../handlers/error-request-handler";
 import { IAuthenticationProvider } from "../security/authentication/authentication-provider";
+import { AuthorizationFilter } from "../security/authorization/authorization-filter";
 export declare abstract class ApplicationInstance {
     private express;
     controllers: IControllerConstructor[];
@@ -12,6 +13,7 @@ export declare abstract class ApplicationInstance {
     authenticationProvider: IAuthenticationProvider;
     constructor();
     middleware(): express.Express;
+    getAuthorizationFilter(): AuthorizationFilter;
     private configAuthProvider();
     private configParsers();
     private configHandlers();

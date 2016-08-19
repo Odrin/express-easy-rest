@@ -11,3 +11,5 @@ export * from './decorators/binding/from-route';
 export * from './decorators/binding/parameter-binding-options';
 export * from './decorators/controller/controller';
 export * from './decorators/controller/controller-options';
+export * from './decorators/security/authorize';
+export * from './decorators/security/allow-anonymous';
