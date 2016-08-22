@@ -1,4 +1,4 @@
-import { ApiController } from "../../easy-rest/controller/controller";
+import { ApiController } from "../../index";
 export declare class SimpleController extends ApiController {
     constructor();
     hello(name: string): string;

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { ApplicationInstance } from "../easy-rest/core/application-instance";
 import { Promise } from "es6-promise";
+import { ApplicationInstance } from "../index";
 export declare class SimpleApp extends ApplicationInstance {
     constructor();
     simpleHandler(req: Request, res: Response): Promise<void>;

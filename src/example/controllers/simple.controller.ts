@@ -1,8 +1,10 @@
-import {ApiController} from "../../easy-rest/controller/controller";
-import {Controller} from "../../easy-rest/decorators/controller/controller";
-import {Action} from "../../easy-rest/decorators/action/action";
-import {FromRoute} from "../../easy-rest/decorators/binding/from-route";
-import {Get} from "../../easy-rest/decorators/action/get";
+import {
+  ApiController,
+  Controller,
+  Action,
+  FromRoute,
+  Get
+} from "../../index";
 
 @Controller({basePath: '/simple'})
 export class SimpleController extends ApiController {

@@ -1,16 +1,17 @@
 import {Promise} from "es6-promise";
-import {ApiController} from "../../easy-rest/controller/controller";
-import {IActionResult} from "../../easy-rest/controller/action-result/action-result";
-import {FromRoute} from "../../easy-rest/decorators/binding/from-route";
-import {Controller} from "../../easy-rest/decorators/controller/controller";
-import {Get} from "../../easy-rest/decorators/action/get";
-import {Post} from "../../easy-rest/decorators/action/post";
-import {FromBody} from "../../easy-rest/decorators/binding/from-body";
-import {authorize} from "../../easy-rest/decorators/security/authorize";
-import {AllowAnonymous} from "../../easy-rest/decorators/security/allow-anonymous";
+import {
+  ApiController,
+  IActionResult,
+  FromBody,
+  Post,
+  Controller,
+  Get,
+  Authorize,
+  AllowAnonymous
+} from "../../index";
 import {Book, BookController} from "./book.controller";
 
-@authorize('user')
+@Authorize('user')
 @Controller({basePath: '/user'})
 export class UserController extends ApiController {
   static books: Book[] = [
@@ -26,8 +27,8 @@ export class UserController extends ApiController {
     });
   }
 
-  @Get('/book/add/:id')
-  addBook(@FromRoute()id: number): IActionResult {
+  @Post('/book/add')
+  addBook(@FromBody()id: number): IActionResult {
     let book = BookController.books.filter((book) => book.id === id)[0];
 
     if (!book) {

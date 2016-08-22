@@ -1,11 +1,13 @@
 import {Promise} from "es6-promise";
-import {ApiController} from "../../easy-rest/controller/controller";
-import {IActionResult} from "../../easy-rest/controller/action-result/action-result";
-import {FromRoute} from "../../easy-rest/decorators/binding/from-route";
-import {Controller} from "../../easy-rest/decorators/controller/controller";
-import {Get} from "../../easy-rest/decorators/action/get";
-import {Post} from "../../easy-rest/decorators/action/post";
-import {FromBody} from "../../easy-rest/decorators/binding/from-body";
+import {
+  ApiController,
+  IActionResult,
+  FromRoute,
+  Controller,
+  Get,
+  Post,
+  FromBody
+} from "../../index";
 
 @Controller({basePath: '/book'})
 export class BookController extends ApiController {
@@ -17,13 +19,6 @@ export class BookController extends ApiController {
 
   @Get('/list')
   getBookList(): Promise<IActionResult> {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(this.ok(BookController.books)), 3000);
-    });
-  }
-
-  @Get('/list/private')
-  getPrivateBookList(): Promise<IActionResult> {
     return new Promise((resolve) => {
       setTimeout(() => resolve(this.ok(BookController.books)), 3000);
     });

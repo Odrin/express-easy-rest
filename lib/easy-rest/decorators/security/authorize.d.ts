@@ -1,1 +1,1 @@
-export declare function authorize(...roles: string[]): ClassDecorator & MethodDecorator;
+export declare function Authorize(...roles: string[]): ClassDecorator & MethodDecorator;

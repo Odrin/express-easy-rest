@@ -1,10 +1,12 @@
 import {Request, Response} from "express";
-import {ApplicationInstance} from "../easy-rest/core/application-instance";
+import {Promise} from "es6-promise";
+import {
+  ApplicationInstance,
+  IPrincipal,
+  IAuthenticationProvider
+} from "../index";
 import {SimpleController} from "./controllers/simple.controller";
 import {BookController} from "./controllers/book.controller";
-import {Promise} from "es6-promise";
-import {IPrincipal} from "../easy-rest/security/principal/principal";
-import {IAuthenticationProvider} from "../easy-rest/security/authentication/authentication-provider";
 import {UserController} from "./controllers/user.controller";
 
 export class SimpleApp extends ApplicationInstance {
