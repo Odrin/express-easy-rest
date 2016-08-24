@@ -1,5 +1,5 @@
 import * as express from "express";
-import { IControllerConstructor } from "../controller/controller";
+import { IControllerConstructor } from "../api/api-controller";
 import { IRequestHandler } from "../handlers/request-handler";
 import { IErrorRequestHandler } from "../handlers/error-request-handler";
 import { IAuthenticationProvider } from "../security/authentication/authentication-provider";
@@ -14,6 +14,7 @@ export declare abstract class ApplicationInstance {
     constructor();
     middleware(): express.Express;
     getAuthorizationFilter(): AuthorizationFilter;
+    private initializeContext();
     private configAuthProvider();
     private configParsers();
     private configHandlers();

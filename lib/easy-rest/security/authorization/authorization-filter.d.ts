@@ -1,7 +1,9 @@
-import { Request, Response } from "express";
+import { HttpActionContext } from "../../http/http-action-context";
+import { HttpContext } from "../../http/http-context";
 export declare class AuthorizationFilter {
     roles: string[];
-    onAuthorization(req: Request, res: Response): boolean;
-    protected isAuthorized(req: Request): boolean;
-    protected handleUnauthorizedRequest(res: Response): void;
+    onAuthorization(actionContext: HttpActionContext): boolean;
+    protected isAuthorized(actionContext: HttpActionContext): boolean;
+    protected handleUnauthorizedRequest(httpContext: HttpContext): void;
+    private skipAuthorization(actionContext);
 }

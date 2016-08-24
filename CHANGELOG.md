@@ -1,3 +1,18 @@
+<a name="0.3.0"></a>
+# [0.3.0](https://github.com/Odrin/express-easy-rest/compare/0.2.2...0.3.0) (2016-XX-XX) <----
+
+### Bug Fixes
+* fixed double configAuthProvider() call
+* fixed action result handler exception for primitives
+
+### Code Refactoring
+* renamed "controller" namespace to "api"
+* ContextDataProvider removed and HttpContextProvider added instead
+* authorization skipping method moved to AuthorizationFilter
+
+### Features
+* HttpContext and HttpActionContext added
+
 <a name="0.2.2"></a>
 # [0.2.2](https://github.com/Odrin/express-easy-rest/compare/0.2.0...0.2.2) (2016-08-22)
 

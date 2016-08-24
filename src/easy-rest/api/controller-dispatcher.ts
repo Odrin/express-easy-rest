@@ -1,61 +1,63 @@
 import * as express from "express";
 import {Promise} from "es6-promise";
-import {IControllerConstructor} from "./controller";
+import {IControllerConstructor} from "./api-controller";
 import {IParameterBindingOptions} from "../decorators/binding/parameter-binding-options";
 import {DataBinder} from "./data-binder";
 import {IActionResult} from "./action-result/action-result";
 import {ResponseMessage} from "./action-result/response-message";
-import {ContextDataProvider} from "../util/context-data-provider";
-import {IPrincipal} from "../security/principal/principal";
+import {HttpContextProvider} from "../util/http-context-provider";
 import {ApplicationInstance} from "../core/application-instance";
 import {Metadata} from "../metadata/metadata";
 import {
-  ACTION_BINDINGS_METADATA_KEY, AUTH_ROLES_METADATA_KEY,
-  AUTH_ANONYMOUS_METADATA_KEY
+  ACTION_BINDINGS_METADATA_KEY,
+  AUTH_ROLES_METADATA_KEY,
 } from "../metadata/metadata-keys";
 import {AuthorizationFilter} from "../security/authorization/authorization-filter";
+import {HttpActionContext} from "../http/http-action-context";
+import {HttpContext} from "../http/http-context";
+import {HttpControllerDescriptor} from "../http/http-controller-descriptor";
+import {Request} from "express";
+import {HttpActionDescriptor} from "../http/http-action-descriptor";
 
 export class ControllerDispatcher {
   private bindings: IParameterBindingOptions[];
   private authorizationFilter: AuthorizationFilter;
+  private returnType: any;
 
   constructor(private instance: ApplicationInstance,
-              private controllerConctructor: IControllerConstructor,
+              private controller: IControllerConstructor,
               private action: string) {
 
-    this.bindings = Metadata.get<IParameterBindingOptions[]>(ACTION_BINDINGS_METADATA_KEY, controllerConctructor.prototype, action) || [];
+    this.returnType = Metadata.getReturnType(controller.prototype, action);
+    this.bindings = Metadata.get<IParameterBindingOptions[]>(ACTION_BINDINGS_METADATA_KEY, controller.prototype, action) || [];
 
-    if (controllerConctructor.prototype[action].length !== this.bindings.length) {
+    if (controller.prototype[action].length !== this.bindings.length) {
       throw new Error(`Binding configuration error: ${action}`);
     }
 
-    //let returnType = Metadata.getReturnType(Controller.prototype, Action);
-    let controllerRoles = Metadata.get(AUTH_ROLES_METADATA_KEY, controllerConctructor);
-    let actionRoles = Metadata.get(AUTH_ROLES_METADATA_KEY, controllerConctructor.prototype, action);
+    let controllerRoles = Metadata.get(AUTH_ROLES_METADATA_KEY, controller);
+    let actionRoles = Metadata.get(AUTH_ROLES_METADATA_KEY, controller.prototype, action);
 
     if (controllerRoles || actionRoles) {
-      //TODO: HttpContext; ActionContext
-      let allowAnonymous = Metadata.get(AUTH_ANONYMOUS_METADATA_KEY, controllerConctructor.prototype, action);
+      let roles = []
+        .concat(controllerRoles || [])
+        .concat(actionRoles || [])
+        .filter((value, index, array) => array.indexOf(value) === index);
 
-      if (!allowAnonymous) {
-        let roles = []
-          .concat(controllerRoles || [])
-          .concat(actionRoles || [])
-          .filter((value, index, array) => array.indexOf(value) === index);
-
-        this.authorizationFilter = instance.getAuthorizationFilter();
-        this.authorizationFilter.roles = roles;
-      }
+      this.authorizationFilter = instance.getAuthorizationFilter();
+      this.authorizationFilter.roles = roles;
     }
   }
 
   handleRequest = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      if (this.authorizationFilter && !this.authorizationFilter.onAuthorization(req, res)) {
+      let actionContext = this.getActionContext(req);
+
+      if (this.authorizationFilter && !this.authorizationFilter.onAuthorization(actionContext)) {
         return next();
       }
 
-      let instance = this.instantiateController(req, res, next);
+      let instance = this.instantiateController(actionContext);
       let action = <Function>(<any>instance)[this.action];
       let parameters = new DataBinder(req, this.bindings).getParameters();
 
@@ -102,7 +104,7 @@ export class ControllerDispatcher {
   }
 
   private isActionResult(object: any): object is IActionResult {
-    return 'executeAsync' in object;
+    return typeof (object) === 'object' && 'executeAsync' in object;
   }
 
   private handlePromiseResult(result: Promise<any>): Promise<ResponseMessage> {
@@ -129,13 +131,30 @@ export class ControllerDispatcher {
     return Promise.resolve(result);
   }
 
-  private instantiateController(req: express.Request, res: express.Response, next: express.NextFunction) {
-    var instance = new this.controllerConctructor();
+  private instantiateController(context: HttpActionContext) {
+    var instance = new this.controller();
 
-    //TODO: wrap request object
-    instance.requset = req;
-    instance.user = ContextDataProvider.getData<IPrincipal>(req, 'principal');
+    instance._context = context;
 
     return instance;
+  }
+
+  private getActionContext(req: Request): HttpActionContext {
+    let httpContext = this.getHttpContext(req);
+    let controllerDiscriptor = new HttpControllerDescriptor();
+    let actionDescriptor = new HttpActionDescriptor();
+
+    controllerDiscriptor.controller = this.controller;
+    controllerDiscriptor.controllerName = (<any>this.controller)['name']; //TODO: ES6 "name" field
+
+    actionDescriptor.actionName = this.action;
+    actionDescriptor.bindings = this.bindings;
+    actionDescriptor.returnType = this.returnType;
+
+    return new HttpActionContext(httpContext, controllerDiscriptor, actionDescriptor);
+  }
+
+  private getHttpContext(req: Request): HttpContext {
+    return HttpContextProvider.getContext(req);
   }
 }

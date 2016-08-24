@@ -1,23 +1,24 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
-import {IControllerConstructor} from "../controller/controller";
+import {IControllerConstructor} from "../api/api-controller";
 import {IControllerOptions} from "../decorators/controller/controller-options";
 import {
-  CONTROLLER_OPTIONS_METADATA_KEY, ACTION_DECLARATION_METADATA_KEY,
-  ACTION_OPTIONS_METADATA_KEY, ACTION_BINDINGS_METADATA_KEY
+  CONTROLLER_OPTIONS_METADATA_KEY,
+  ACTION_DECLARATION_METADATA_KEY,
+  ACTION_OPTIONS_METADATA_KEY
 } from "../metadata/metadata-keys";
 import {IActionOptions} from "../decorators/action/action-options";
-import {IParameterBindingOptions} from "../decorators/binding/parameter-binding-options";
 import {PathBuilder} from "../util/path-builder";
-import {ControllerDispatcher} from "../controller/controller-dispatcher";
+import {ControllerDispatcher} from "../api/controller-dispatcher";
 import {IRequestHandler} from "../handlers/request-handler";
 import {IErrorRequestHandler} from "../handlers/error-request-handler";
 import {Metadata} from "../metadata/metadata";
 import {Promise} from "es6-promise";
 import {IAuthenticationProvider} from "../security/authentication/authentication-provider";
 import {DefaultAuthenticationProvider} from "../security/authentication/default-authentication-provider";
-import {ContextDataProvider} from "../util/context-data-provider";
+import {HttpContextProvider} from "../util/http-context-provider";
 import {AuthorizationFilter} from "../security/authorization/authorization-filter";
+import {HttpContext} from "../http/http-context";
 
 export abstract class ApplicationInstance {
   private express: express.Express = express();
@@ -48,8 +49,8 @@ export abstract class ApplicationInstance {
   }
 
   middleware(): express.Express {
+    this.initializeContext();
     this.configHandlers();
-    this.configAuthProvider();
     this.configParsers();
     this.configAuthProvider();
     this.configRouter();
@@ -66,19 +67,28 @@ export abstract class ApplicationInstance {
     return new AuthorizationFilter();
   }
 
+  private initializeContext() {
+    //TODO: fix
+    //noinspection TypeScriptValidateTypes
+    this.express.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+      let httpContext = new HttpContext(req, res, next);
+      HttpContextProvider.setContext(req, httpContext);
+      next();
+    });
+  }
+
   private configAuthProvider() {
     //TODO: fix
-    //TODO: 'principal' key constant
     //noinspection TypeScriptValidateTypes
     this.express.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
       if (!this.authenticationProvider) {
-        ContextDataProvider.setData(req, 'principal', null);
         return next();
       }
 
       this.authenticationProvider.onAuthentication(req, res)
         .then((principal) => {
-          ContextDataProvider.setData(req, 'principal', principal || null);
+          let context = HttpContextProvider.getContext(req);
+          context.user = principal || null;
           next();
         })
         .catch((error) => next(error));

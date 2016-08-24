@@ -1,24 +1,26 @@
-import {Request, Response} from "express";
-import {IPrincipal} from "../principal/principal";
-import {ContextDataProvider} from "../../util/context-data-provider";
+import {HttpActionContext} from "../../http/http-action-context";
+import {HttpContext} from "../../http/http-context";
+import {AUTH_ANONYMOUS_METADATA_KEY} from "../../metadata/metadata-keys";
+import {Metadata} from "../../metadata/metadata";
 
 export class AuthorizationFilter {
   roles: string[];
 
-  onAuthorization(req: Request, res: Response): boolean {
+  onAuthorization(actionContext: HttpActionContext): boolean {
+    if (this.skipAuthorization(actionContext)) {
+      return true;
+    }
 
-    //TODO: skip authorization
-
-    if (!this.isAuthorized(req)) {
-      this.handleUnauthorizedRequest(res);
+    if (!this.isAuthorized(actionContext)) {
+      this.handleUnauthorizedRequest(actionContext.httpContext);
       return false;
     }
 
     return true;
   }
 
-  protected isAuthorized(req: Request): boolean {
-    let user = ContextDataProvider.getData<IPrincipal>(req, 'principal');
+  protected isAuthorized(actionContext: HttpActionContext): boolean {
+    let user = actionContext.httpContext.user;
 
     if (!user || !user.identity || !user.identity.isAuthenticated) {
       return false;
@@ -39,7 +41,14 @@ export class AuthorizationFilter {
     return true;
   }
 
-  protected handleUnauthorizedRequest(res: Response) {
-    res.status(401).send();
+  protected handleUnauthorizedRequest(httpContext: HttpContext) {
+    httpContext.response.status(401).send();
+  }
+
+  private skipAuthorization(actionContext: HttpActionContext): boolean {
+    let target = actionContext.controllerDescriptor.controller.prototype;
+    let key = actionContext.actionDescriptor.actionName;
+
+    return Metadata.get<boolean>(AUTH_ANONYMOUS_METADATA_KEY, target, key);
   }
 }
