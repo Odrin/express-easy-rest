@@ -13,7 +13,6 @@ import {ControllerDispatcher} from "../api/controller-dispatcher";
 import {IRequestHandler} from "../handlers/request-handler";
 import {IErrorRequestHandler} from "../handlers/error-request-handler";
 import {Metadata} from "../metadata/metadata";
-import {Promise} from "es6-promise";
 import {IAuthenticationProvider} from "../security/authentication/authentication-provider";
 import {DefaultAuthenticationProvider} from "../security/authentication/default-authentication-provider";
 import {HttpContextProvider} from "../util/http-context-provider";

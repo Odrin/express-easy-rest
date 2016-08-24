@@ -9,6 +9,7 @@
 * renamed "controller" namespace to "api"
 * ContextDataProvider removed and HttpContextProvider added instead
 * authorization skipping method moved to AuthorizationFilter
+* es6-promise dependency replaced by es6-shim typings
 
 ### Features
 * HttpContext and HttpActionContext added

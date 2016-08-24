@@ -1,5 +1,4 @@
 import * as express from "express";
-import {Promise} from "es6-promise";
 import {IControllerConstructor} from "./api-controller";
 import {IParameterBindingOptions} from "../decorators/binding/parameter-binding-options";
 import {DataBinder} from "./data-binder";

@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { Promise } from "es6-promise";
 import { ApplicationInstance } from "../index";
 export declare class SimpleApp extends ApplicationInstance {
     constructor();

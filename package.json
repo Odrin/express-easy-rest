@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "body-parser": "^1.15.2",
-    "es6-promise": "^3.2.1",
     "express": "^4.14.0",
     "reflect-metadata": "^0.1.3"
   },
