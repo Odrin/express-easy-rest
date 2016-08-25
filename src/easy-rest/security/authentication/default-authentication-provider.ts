@@ -4,7 +4,7 @@ import {Request} from "express";
 import {Response} from "express";
 import {IAuthenticationProvider} from "./authentication-provider";
 
-export class DefaultAuthenticationProvider implements IAuthenticationProvider{
+export class DefaultAuthenticationProvider implements IAuthenticationProvider {
   onAuthentication(req: Request, res: Response): Promise<IPrincipal> {
     return Promise.resolve({
       identity: {
@@ -12,7 +12,9 @@ export class DefaultAuthenticationProvider implements IAuthenticationProvider{
         name: null,
         authenticationType: null
       },
-      isInRole(role: string) { return false; }
+      isInRole(role: string) {
+        return false;
+      }
     });
   };
 }

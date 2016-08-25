@@ -102,7 +102,7 @@ export abstract class ApplicationInstance {
       }
 
       try {
-        let promise: Promise<void> = Promise.resolve();
+        let promise: Promise<void> = Promise.resolve<void>();
 
         for (let i = 0; i < this.requestHandlers.length; i++) {
           let handler = this.requestHandlers[i];

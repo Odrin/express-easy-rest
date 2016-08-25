@@ -22,7 +22,7 @@ export class SimpleApp extends ApplicationInstance {
 
   simpleHandler(req: Request, res: Response): Promise<void> {
     console.log('Handle any request here');
-    return Promise.resolve();
+    return Promise.resolve<void>();
   }
 
   simpleErrorHandler1(err: any, req: Request, res: Response): Promise<any> {

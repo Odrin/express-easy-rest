@@ -1,4 +1,3 @@
-import { Promise } from "es6-promise";
 import { ApiController, IActionResult } from "../../index";
 import { Book } from "./book.controller";
 export declare class UserController extends ApiController {
