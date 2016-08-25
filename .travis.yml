@@ -8,3 +8,6 @@ install:
   - typings install
 script:
   - gulp
+cache:
+  directories:
+    - node_modules
