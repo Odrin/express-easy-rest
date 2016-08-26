@@ -18,6 +18,7 @@ import {DefaultAuthenticationProvider} from "../security/authentication/default-
 import {HttpContextProvider} from "../util/http-context-provider";
 import {AuthorizationFilter} from "../security/authorization/authorization-filter";
 import {HttpContext} from "../http/http-context";
+import {Cache} from "../caching/cache";
 
 export abstract class ApplicationInstance {
   private express: express.Express = express();
@@ -71,7 +72,10 @@ export abstract class ApplicationInstance {
     //noinspection TypeScriptValidateTypes
     this.express.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
       let httpContext = new HttpContext(req, res, next);
+      httpContext.cache = Cache.instance;
+
       HttpContextProvider.setContext(req, httpContext);
+
       next();
     });
   }

@@ -62,12 +62,12 @@ gulp.task('_build', 'INTERNAL TASK - Compiles all TypeScript source files', func
 });
 
 //run tslint task, then run update-tsconfig and gen-def in parallel, then run _build
-gulp.task('build', 'Compiles all TypeScript source files and updates module references', function(callback) {
+gulp.task('build', 'Compiles all TypeScript source files and updates module references', function (callback) {
   gulpSequence('tslint', ['update-tsconfig', 'gen-def'], '_build')(callback);
 });
 
-gulp.task('test', 'Runs the Jasmine test specs', ['build'], function () {
-  return gulp.src('test/*.js')
+gulp.task('test', 'Runs the Jasmine test specs', ['_build'], function () {
+  return gulp.src('lib/test/**/*.spec.js')
     .pipe(jasmine());
 });
 
@@ -76,7 +76,7 @@ gulp.task('watch', 'Watches ts source files and runs build on change', function 
 });
 
 gulp.task('server-local', [], function () {
-  var app  = require('./lib/example/index');
+  var app = require('./lib/example/index');
 
   express()
     .use('/api', app.middleware())

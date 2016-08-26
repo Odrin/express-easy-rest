@@ -1,5 +1,5 @@
 <a name="0.3.0"></a>
-# [0.3.0](https://github.com/Odrin/express-easy-rest/compare/0.2.2...0.3.0) (2016-XX-XX) <----
+# [0.3.0](https://github.com/Odrin/express-easy-rest/compare/0.2.2...0.3.0) (2016-08-26)
 
 ### Bug Fixes
 * fixed double configAuthProvider() call
@@ -10,9 +10,11 @@
 * ContextDataProvider removed and HttpContextProvider added instead
 * authorization skipping method moved to AuthorizationFilter
 * es6-promise dependency replaced by es6-shim typings
+* finally appeared the first tests 🎉
 
 ### Features
 * HttpContext and HttpActionContext added
+* Caching class added
 
 <a name="0.2.2"></a>
 # [0.2.2](https://github.com/Odrin/express-easy-rest/compare/0.2.0...0.2.2) (2016-08-22)
