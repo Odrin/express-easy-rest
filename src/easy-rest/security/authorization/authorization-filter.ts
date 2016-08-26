@@ -29,7 +29,7 @@ export class AuthorizationFilter {
     if (this.roles.length !== 0) {
       let hasRole = false;
 
-      for (let role in this.roles) {
+      for (let role of this.roles) {
         hasRole = hasRole || user.isInRole(role);
       }
 
