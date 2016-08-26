@@ -1,5 +1,4 @@
 import {Request, Response} from "express";
-import {Promise} from "es6-promise";
 import {
   ApplicationInstance,
   IPrincipal,
@@ -22,7 +21,7 @@ export class SimpleApp extends ApplicationInstance {
 
   simpleHandler(req: Request, res: Response): Promise<void> {
     console.log('Handle any request here');
-    return Promise.resolve<void>();
+    return Promise.resolve();
   }
 
   simpleErrorHandler1(err: any, req: Request, res: Response): Promise<any> {

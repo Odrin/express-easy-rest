@@ -19,6 +19,7 @@
     "node",
     "express",
     "rest",
+    "rest api",
     "typescript"
   ],
   "scripts": {
@@ -26,20 +27,19 @@
   },
   "dependencies": {
     "body-parser": "^1.15.2",
-    "es6-promise": "^3.2.1",
     "express": "^4.14.0",
     "reflect-metadata": "^0.1.3"
   },
   "devDependencies": {
-    "del": "2.0.2",
+    "del": "^2.2.2",
     "dotbin": "^1.0",
     "gulp": "^3.9.0",
     "gulp-help": "^1.6.0",
     "gulp-inject": "3.0.0",
     "gulp-jasmine": "^2.0.1",
-    "gulp-sequence": "0.4.1",
+    "gulp-sequence": "^0.4.5",
     "gulp-tslint": "^3.1",
-    "jasmine": "^2.3.1",
+    "jasmine": "^2.4.1",
     "tslint": "^3.14",
     "typescript": "^1.8.10",
     "typings": "^1.3.2"

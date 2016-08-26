@@ -38,13 +38,12 @@ gulp.task('_build', 'INTERNAL TASK - Compiles all TypeScript source files', func
   });
 });
 
-gulp.task('build', 'Compiles all TypeScript source files and updates module references', function(callback) {
+gulp.task('build', 'Compiles all TypeScript source files and updates module references', function (callback) {
   gulpSequence('tslint', '_build')(callback);
 });
 
-//TODO: tests
 gulp.task('test', 'Runs the Jasmine test specs', ['build'], function () {
-  return gulp.src('test/*.js')
+  return gulp.src('lib/test/**/*.spec.js')
     .pipe(jasmine());
 });
 
@@ -53,7 +52,7 @@ gulp.task('watch', 'Watches ts source files and runs build on change', function 
 });
 
 gulp.task('server-local', [], function () {
-  var app  = require('./lib/example/index');
+  var app = require('./lib/example/index');
 
   express()
     .use('/api', app.middleware())
@@ -62,4 +61,4 @@ gulp.task('server-local', [], function () {
   console.info('Local rest api server running on http://localhost:8000/');
 });
 
-gulp.task('default', 'Default task', ['build']);
+gulp.task('default', 'Default task', ['test']);
