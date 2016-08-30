@@ -39,7 +39,7 @@ gulp.task('_build', 'INTERNAL TASK - Compiles all TypeScript source files', func
 });
 
 gulp.task('build', 'Compiles all TypeScript source files and updates module references', function (callback) {
-  gulpSequence('tslint', '_build')(callback);
+  gulpSequence('tslint', 'clean', '_build')(callback);
 });
 
 gulp.task('test', 'Runs the Jasmine test specs', ['build'], function () {
@@ -53,8 +53,15 @@ gulp.task('watch', 'Watches ts source files and runs build on change', function 
 
 gulp.task('server-local', [], function () {
   var app = require('./lib/example/index');
+  var session = require('express-session');
 
   express()
+    .use(session({
+      secret: 'example',
+      saveUninitialized: true,
+      resave: false,
+      cookie: {}
+    }))
     .use('/api', app.middleware())
     .listen(8000);
 

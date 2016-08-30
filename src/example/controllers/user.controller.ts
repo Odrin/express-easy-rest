@@ -3,7 +3,6 @@ import {
   IActionResult,
   FromBody,
   Post,
-  Controller,
   Get,
   Authorize,
   AllowAnonymous
@@ -16,8 +15,11 @@ export class UserController extends ApiController {
     {id: 2, name: 'book 2'},
     {id: 3, name: 'book 3'}
   ];
+  static users: User[] = [
+    { login: 'Admin', pwd: 'qwerty' },
+    { login: 'User', pwd: 'user123' }
+  ];
 
-  @AllowAnonymous()
   @Get('/user/book/list')
   getBookList(): Promise<IActionResult> {
     return new Promise((resolve) => {
@@ -26,7 +28,7 @@ export class UserController extends ApiController {
   }
 
   @Post('/user/book/add')
-  addBook(@FromBody()id: number): IActionResult {
+  addBook(@FromBody('id')id: number): IActionResult {
     let book = BookController.books.filter((book) => book.id === id)[0];
 
     if (!book) {
@@ -39,4 +41,41 @@ export class UserController extends ApiController {
 
     return this.ok();
   }
+
+  @AllowAnonymous()
+  @Post('/user/signin')
+  signIn(@FromBody('login')login: string, @FromBody('pwd')pwd: string): IActionResult {
+    if (!login || !pwd) {
+      return this.badRequest('Incorrect auth data');
+    }
+
+    let user = this.getUserByLogin(login);
+
+    if (user === null) {
+      return this.notFound(`User "${login}" not found`);
+    }
+
+    if (user.pwd !== pwd) {
+      return this.badRequest('Incorrect password');
+    }
+
+    (<any>this.request)['session'].login = login;
+
+    return this.ok();
+  }
+
+  private getUserByLogin(login: string) {
+    for (let user of UserController.users) {
+      if (user.login === login) {
+        return user;
+      }
+    }
+
+    return null;
+  }
+}
+
+export class User {
+  login: string;
+  pwd: string;
 }

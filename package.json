@@ -33,6 +33,7 @@
   "devDependencies": {
     "del": "^2.2.2",
     "dotbin": "^1.0",
+    "express-session": "^1.14.1",
     "gulp": "^3.9.0",
     "gulp-help": "^1.6.0",
     "gulp-inject": "3.0.0",
