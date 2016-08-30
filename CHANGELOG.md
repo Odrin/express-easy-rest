@@ -3,6 +3,10 @@
 
 ### Bug Fixes
 * PathBuilder returns an incorrect value when base path wasn't specified
+* deleted old unused files from lib directory
+
+### Code Refactoring
+* simple session example added
 
 <a name="0.3.0"></a>
 # [0.3.0](https://github.com/Odrin/express-easy-rest/compare/0.2.2...0.3.0) (2016-08-26)
