@@ -11,7 +11,6 @@ import {
 import {Book, BookController} from "./book.controller";
 
 @Authorize('user')
-@Controller({basePath: '/user'})
 export class UserController extends ApiController {
   static books: Book[] = [
     {id: 2, name: 'book 2'},
@@ -19,14 +18,14 @@ export class UserController extends ApiController {
   ];
 
   @AllowAnonymous()
-  @Get('/book/list')
+  @Get('/user/book/list')
   getBookList(): Promise<IActionResult> {
     return new Promise((resolve) => {
       setTimeout(() => resolve(this.ok(UserController.books)), 3000);
     });
   }
 
-  @Post('/book/add')
+  @Post('/user/book/add')
   addBook(@FromBody()id: number): IActionResult {
     let book = BookController.books.filter((book) => book.id === id)[0];
 

@@ -1,4 +1,4 @@
-import { PathParams } from "express-serve-static-core";
+import { ActionPathParam } from "../api/action-path-params";
 export declare class PathBuilder {
-    static build(basePath: string, methodPath: PathParams, action: string): PathParams;
+    static build(basePath: string, methodPath: ActionPathParam, action: string): ActionPathParam;
 }

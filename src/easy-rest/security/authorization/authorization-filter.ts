@@ -4,7 +4,15 @@ import {AUTH_ANONYMOUS_METADATA_KEY} from "../../metadata/metadata-keys";
 import {Metadata} from "../../metadata/metadata";
 
 export class AuthorizationFilter {
-  roles: string[];
+  private _roles: string[];
+
+  get roles(): string[] {
+    return this._roles || [];
+  }
+
+  set roles(value: string[]) {
+    this._roles = value;
+  }
 
   onAuthorization(actionContext: HttpActionContext): boolean {
     if (this.skipAuthorization(actionContext)) {
