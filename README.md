@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Odrin/express-easy-rest.svg?branch=master)](https://travis-ci.org/Odrin/express-easy-rest)
+[![npm version](https://badge.fury.io/js/express-easy-rest.svg)](https://badge.fury.io/js/express-easy-rest) [![Build Status](https://travis-ci.org/Odrin/express-easy-rest.svg?branch=master)](https://travis-ci.org/Odrin/express-easy-rest)
 
 #express-easy-rest
 Simple and easy, [express](https://github.com/expressjs/express/) based, charged with power of TypeScript, REST API framework.
