@@ -8,8 +8,10 @@ import {
   AllowAnonymous
 } from "../../index";
 import {Book, BookController} from "./book.controller";
+import {Controller} from "../../easy-rest/decorators/controller/controller";
 
 @Authorize('user')
+@Controller()
 export class UserController extends ApiController {
   static books: Book[] = [
     {id: 2, name: 'book 2'},

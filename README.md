@@ -5,11 +5,7 @@ Simple and easy, [express](https://github.com/expressjs/express/) based, charged
 
 ```TypeScript
 class App extends ApplicationInstance {
-  constructor() {
-      super();
   
-      this.controllers.push(...[BookController]);
-    }
 }
 
 export = new App();
@@ -29,7 +25,7 @@ export class BookController extends ApiController {
 ```
 ```JavaScript
 var express = require('express');
-var app = require('./lib/app');
+var app = require('./app');
 
 express()
   .use('/api', app.middleware())

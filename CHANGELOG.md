@@ -1,3 +1,13 @@
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/Odrin/express-easy-rest/compare/1.0.0...0.3.1) (2016-xx-xx)
+
+### Bug Fixes
+
+### Code Refactoring
+
+### Features
+* controller initialization via glob, no more need to list all controllers in ApplicationInstance constructor
+
 <a name="0.3.2"></a>
 # [0.3.2](https://github.com/Odrin/express-easy-rest/compare/0.3.1...0.3.2) (2016-08-31)
 

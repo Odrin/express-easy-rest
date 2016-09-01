@@ -4,16 +4,14 @@ import {
   IPrincipal,
   IAuthenticationProvider
 } from "../index";
-import {SimpleController} from "./controllers/simple.controller";
-import {BookController} from "./controllers/book.controller";
-import {UserController} from "./controllers/user.controller";
 
 export class SimpleApp extends ApplicationInstance {
 
   constructor() {
     super();
 
-    this.controllers.push(...[SimpleController, BookController, UserController]);
+    this.controllersPathPattern = __dirname + '/controllers/**/*.js';
+
     this.requestHandlers.push(this.simpleHandler);
     this.errorHandlers.push(...[this.simpleErrorHandler1, this.simpleErrorHandler2]);
     this.authenticationProvider = this.getAuthProvider();

@@ -19,14 +19,15 @@ import {HttpContextProvider} from "../util/http-context-provider";
 import {AuthorizationFilter} from "../security/authorization/authorization-filter";
 import {HttpContext} from "../http/http-context";
 import {Cache} from "../caching/cache";
+import {ModuleLoader} from "./module-loader";
 
 export abstract class ApplicationInstance {
   private express: express.Express = express();
 
   /**
-   * Array of controllers used for routing
+   * Path pattern to load controllers. Default: __dirname + /controllers/**&#47;*.js
    */
-  controllers: IControllerConstructor[] = [];
+  controllersPathPattern: string = __dirname + '/controllers/**/*.js';
   /**
    * Array of request request handlers that will be called before request routing
    */
@@ -49,6 +50,7 @@ export abstract class ApplicationInstance {
   }
 
   middleware(): express.Express {
+    this.loadModules();
     this.initializeContext();
     this.configHandlers();
     this.configParsers();
@@ -65,6 +67,10 @@ export abstract class ApplicationInstance {
    */
   getAuthorizationFilter() {
     return new AuthorizationFilter();
+  }
+
+  private loadModules() {
+    ModuleLoader.load(this.controllersPathPattern);
   }
 
   private initializeContext() {
@@ -161,7 +167,9 @@ export abstract class ApplicationInstance {
   }
 
   private configRouter() {
-    for (let controller of this.controllers) {
+    let controllers = ModuleLoader.controllers;
+
+    for (let controller of controllers) {
       let ctrlOptions = Metadata.get<IControllerOptions>(CONTROLLER_OPTIONS_METADATA_KEY, controller) || {}; //TODO: Controller options defaults
       let actions = Metadata.get<string[]>(ACTION_DECLARATION_METADATA_KEY, controller.prototype);
 
