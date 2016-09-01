@@ -1,5 +1,5 @@
-import { PathParams } from "express-serve-static-core";
+import { ActionPathParam } from "../../api/action-path-params";
 export interface IActionOptions {
     method: string;
-    path?: PathParams;
+    path?: ActionPathParam;
 }

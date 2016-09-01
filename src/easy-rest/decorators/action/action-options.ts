@@ -1,4 +1,4 @@
-import {PathParams} from "express-serve-static-core";
+import {ActionPathParam} from "../../api/action-path-params";
 
 export interface IActionOptions {
   /**
@@ -9,5 +9,5 @@ export interface IActionOptions {
    * Method path. If not specified the name of the method used.
    * eg. getBook() -> /getbook/
    */
-  path?: PathParams;
+  path?: ActionPathParam;
 }

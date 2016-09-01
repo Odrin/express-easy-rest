@@ -40,16 +40,23 @@ export class SimpleApp extends ApplicationInstance {
   private getAuthProvider(): IAuthenticationProvider {
     return {
       onAuthentication(req: Request, res: Response): Promise<IPrincipal> {
-        return Promise.resolve<IPrincipal>({
+        let session: any = (<any>req)['session'] || {};
+        let principal: IPrincipal = {
           identity: {
             authenticationType: 'form',
-            isAuthenticated: true,
-            name: 'User'
+            isAuthenticated: !!session.login,
+            name: session.login || null
           },
           isInRole(role: string): boolean {
-            return false;
+            if (session.login === 'Admin') {
+              return true;
+            }
+
+            return session.login && role === 'user';
           }
-        });
+        };
+
+        return Promise.resolve<IPrincipal>(principal);
       }
     };
   }

@@ -1,3 +1,19 @@
+<a name="0.3.2"></a>
+# [0.3.2](https://github.com/Odrin/express-easy-rest/compare/0.3.1...0.3.2) (2016-08-31)
+
+### Code Refactoring
+* move express NPM dependencies to peerDependencies for better compatibility
+
+<a name="0.3.1"></a>
+# [0.3.1](https://github.com/Odrin/express-easy-rest/compare/0.3.0...0.3.1) (2016-08-30)
+
+### Bug Fixes
+* PathBuilder returns an incorrect value when base path wasn't specified
+* deleted old unused files from lib directory
+
+### Code Refactoring
+* simple session example added
+
 <a name="0.3.0"></a>
 # [0.3.0](https://github.com/Odrin/express-easy-rest/compare/0.2.2...0.3.0) (2016-08-26)
 
