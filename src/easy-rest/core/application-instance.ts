@@ -1,6 +1,5 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
-import {IControllerConstructor} from "../api/api-controller";
 import {IControllerOptions} from "../decorators/controller/controller-options";
 import {
   CONTROLLER_OPTIONS_METADATA_KEY,
@@ -11,7 +10,6 @@ import {IActionOptions} from "../decorators/action/action-options";
 import {PathBuilder} from "../util/path-builder";
 import {ControllerDispatcher} from "../api/controller-dispatcher";
 import {IRequestHandler} from "../handlers/request-handler";
-import {IErrorRequestHandler} from "../handlers/error-request-handler";
 import {Metadata} from "../metadata/metadata";
 import {IAuthenticationProvider} from "../security/authentication/authentication-provider";
 import {DefaultAuthenticationProvider} from "../security/authentication/default-authentication-provider";
@@ -33,10 +31,6 @@ export abstract class ApplicationInstance {
    */
   requestHandlers: IRequestHandler[] = [];
   /**
-   * Array of global api application error request handlers
-   */
-  errorHandlers: IErrorRequestHandler[] = [];
-  /**
    * Array of body parsers. Default is single json body parser.
    * @see {@link http://expressjs.com/en/4x/api.html#req.body}
    * @see {@link https://github.com/expressjs/body-parser}
@@ -56,7 +50,7 @@ export abstract class ApplicationInstance {
     this.configParsers();
     this.configAuthProvider();
     this.configRouter();
-    this.configErrorHandlers();
+    this.configErrorHandler();
 
     return this.express;
   }
@@ -67,6 +61,16 @@ export abstract class ApplicationInstance {
    */
   getAuthorizationFilter() {
     return new AuthorizationFilter();
+  }
+
+  /**
+   * Override for custom global error handling
+   * @param error
+   * @param httpContext
+   */
+  onError(error: any, httpContext: HttpContext) {
+    httpContext.response.status(500).json(error);
+    httpContext.next(error);
   }
 
   private loadModules() {
@@ -139,26 +143,14 @@ export abstract class ApplicationInstance {
     });
   }
 
-  private configErrorHandlers() {
+  private configErrorHandler() {
     //TODO: fix
     //noinspection TypeScriptValidateTypes
     this.express.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-      if (this.errorHandlers.length === 0) {
-        return next(err);
-      }
-
       try {
-        let promise: Promise<void> = Promise.resolve(err);
+        let httpContext = HttpContextProvider.getContext(req);
 
-        for (let i = 0; i < this.errorHandlers.length; i++) {
-          let handler = this.errorHandlers[i];
-
-          promise.then((error) => handler(error, req, res));
-        }
-
-        promise
-          .then((error) => next(error))
-          .catch((error) => next());
+        this.onError(err, httpContext);
       }
       catch (error) {
         next(error);

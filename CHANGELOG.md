@@ -4,6 +4,7 @@
 ### Bug Fixes
 
 ### Code Refactoring
+* ApplicationInstance.errorHandlers replaced by single global onError() handler
 
 ### Features
 * controller initialization via glob, no more need to list all controllers in ApplicationInstance constructor

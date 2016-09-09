@@ -4,6 +4,7 @@ import {
   IPrincipal,
   IAuthenticationProvider
 } from "../index";
+import {HttpContext} from "../easy-rest/http/http-context";
 
 export class SimpleApp extends ApplicationInstance {
 
@@ -13,26 +14,17 @@ export class SimpleApp extends ApplicationInstance {
     this.controllersPathPattern = __dirname + '/controllers/**/*.js';
 
     this.requestHandlers.push(this.simpleHandler);
-    this.errorHandlers.push(...[this.simpleErrorHandler1, this.simpleErrorHandler2]);
     this.authenticationProvider = this.getAuthProvider();
+  }
+
+  onError(error: any, httpContext: HttpContext) {
+    httpContext.response.status(500).send('Sorry, service temporarily unavailable.');
+    httpContext.next();
   }
 
   simpleHandler(req: Request, res: Response): Promise<void> {
     console.log('Handle any request here');
     return Promise.resolve();
-  }
-
-  simpleErrorHandler1(err: any, req: Request, res: Response): Promise<any> {
-    console.log(`Log error: ${err}`);
-    return Promise.resolve(err);
-  }
-
-  simpleErrorHandler2(err: any, req: Request, res: Response): Promise<any> {
-    console.log(`Handle error`);
-
-    res.status(500).send('Sorry, service temporarily unavailable.');
-
-    return Promise.reject(null);
   }
 
   private getAuthProvider(): IAuthenticationProvider {
