@@ -5,6 +5,7 @@ import {
   FromRoute,
   Get
 } from "../../index";
+import {NotFoundError} from "../../easy-rest/exceptions/not-found-error";
 
 @Controller({basePath: '/simple'})
 export class SimpleController extends ApiController {
@@ -28,5 +29,10 @@ export class SimpleController extends ApiController {
   @Get('/error')
   getError() {
     throw new Error('My test error');
+  }
+
+  @Get('/notfound')
+  getNotFoundError() {
+    throw new NotFoundError('I can\'t find what you want');
   }
 }

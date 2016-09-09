@@ -17,6 +17,7 @@ import {HttpContext} from "../http/http-context";
 import {HttpControllerDescriptor} from "../http/http-controller-descriptor";
 import {Request} from "express";
 import {HttpActionDescriptor} from "../http/http-action-descriptor";
+import {HttpError} from "../exceptions/api-error";
 
 export class ControllerDispatcher {
   private bindings: IParameterBindingOptions[];
@@ -81,8 +82,15 @@ export class ControllerDispatcher {
         });
     }
     catch (error) {
-      res.status(500);
-      next(error);
+      if (error instanceof HttpError) {
+        res.status(error.getStatus());
+        res.json(error.getMessage());
+        next(error);
+      }
+      else {
+        res.status(500);
+        next(error);
+      }
     }
   };
 
