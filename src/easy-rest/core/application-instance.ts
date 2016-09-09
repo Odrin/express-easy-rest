@@ -9,7 +9,6 @@ import {
 import {IActionOptions} from "../decorators/action/action-options";
 import {PathBuilder} from "../util/path-builder";
 import {ControllerDispatcher} from "../api/controller-dispatcher";
-import {IRequestHandler} from "../handlers/request-handler";
 import {Metadata} from "../metadata/metadata";
 import {IAuthenticationProvider} from "../security/authentication/authentication-provider";
 import {DefaultAuthenticationProvider} from "../security/authentication/default-authentication-provider";
@@ -26,10 +25,7 @@ export abstract class ApplicationInstance {
    * Path pattern to load controllers. Default: __dirname + /controllers/**&#47;*.js
    */
   controllersPathPattern: string = __dirname + '/controllers/**/*.js';
-  /**
-   * Array of request request handlers that will be called before request routing
-   */
-  requestHandlers: IRequestHandler[] = [];
+
   /**
    * Array of body parsers. Default is single json body parser.
    * @see {@link http://expressjs.com/en/4x/api.html#req.body}
@@ -46,7 +42,7 @@ export abstract class ApplicationInstance {
   middleware(): express.Express {
     this.loadModules();
     this.initializeContext();
-    this.configHandlers();
+    this.configRequestHandler();
     this.configParsers();
     this.configAuthProvider();
     this.configRouter();
@@ -64,7 +60,17 @@ export abstract class ApplicationInstance {
   }
 
   /**
+   * Override for custom global request handling.
+   * Don't forget about next()
+   * @param httpContext
+   */
+  onRequest(httpContext: HttpContext) {
+    httpContext.next();
+  }
+
+  /**
    * Override for custom global error handling
+   * Don't forget about next()
    * @param error
    * @param httpContext
    */
@@ -116,26 +122,14 @@ export abstract class ApplicationInstance {
     }
   }
 
-  private configHandlers() {
+  private configRequestHandler() {
     //TODO: fix
     //noinspection TypeScriptValidateTypes
     this.express.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-      if (this.requestHandlers.length === 0) {
-        return next();
-      }
-
       try {
-        let promise: Promise<void> = Promise.resolve();
+        let httpContext = HttpContextProvider.getContext(req);
 
-        for (let i = 0; i < this.requestHandlers.length; i++) {
-          let handler = this.requestHandlers[i];
-
-          promise = promise.then(() => handler(req, res));
-        }
-
-        promise
-          .then(() => next())
-          .catch((error) => next(error));
+        this.onRequest(httpContext);
       }
       catch (error) {
         next(error);

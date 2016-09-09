@@ -5,6 +5,7 @@
 
 ### Code Refactoring
 * ApplicationInstance.errorHandlers replaced by single global onError() handler
+* ApplicationInstance.requestHandlers replaced by single global onRequest() handler
 
 ### Features
 * controller initialization via glob, no more need to list all controllers in ApplicationInstance constructor

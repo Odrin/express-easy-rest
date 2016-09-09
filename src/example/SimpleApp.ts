@@ -12,19 +12,17 @@ export class SimpleApp extends ApplicationInstance {
     super();
 
     this.controllersPathPattern = __dirname + '/controllers/**/*.js';
-
-    this.requestHandlers.push(this.simpleHandler);
     this.authenticationProvider = this.getAuthProvider();
+  }
+
+  onRequest(httpContext: HttpContext) {
+    console.log('Handle any request here');
+    httpContext.next();
   }
 
   onError(error: any, httpContext: HttpContext) {
     httpContext.response.status(500).send('Sorry, service temporarily unavailable.');
     httpContext.next();
-  }
-
-  simpleHandler(req: Request, res: Response): Promise<void> {
-    console.log('Handle any request here');
-    return Promise.resolve();
   }
 
   private getAuthProvider(): IAuthenticationProvider {
