@@ -9,7 +9,6 @@ import {Request} from "express";
 
 export class ApiController {
   _context: HttpActionContext;
-  // private _user: IPrincipal;
 
   constructor() {
   }

@@ -75,7 +75,11 @@ export abstract class ApplicationInstance {
    * @param httpContext
    */
   onError(error: any, httpContext: HttpContext) {
-    httpContext.response.status(500).json(error);
+    if (!httpContext.response.headersSent) {
+      httpContext.response.status(500);
+      httpContext.response.json(error);
+    }
+
     httpContext.next(error);
   }
 

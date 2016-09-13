@@ -17,3 +17,6 @@ export * from './decorators/controller/controller-options';
 export * from './decorators/security/authorize';
 export * from './decorators/security/allow-anonymous';
 
+export * from './decorators/exception-filter/controller-exception-filter';
+export * from './decorators/exception-filter/action-exception-filter';
+

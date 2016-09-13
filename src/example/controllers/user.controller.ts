@@ -1,4 +1,5 @@
 import {
+  Controller,
   ApiController,
   IActionResult,
   FromBody,
@@ -8,7 +9,6 @@ import {
   AllowAnonymous
 } from "../../index";
 import {Book, BookController} from "./book.controller";
-import {Controller} from "../../easy-rest/decorators/controller/controller";
 
 @Authorize('user')
 @Controller()

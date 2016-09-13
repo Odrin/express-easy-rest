@@ -2,9 +2,9 @@ import {Request, Response} from "express";
 import {
   ApplicationInstance,
   IPrincipal,
-  IAuthenticationProvider
+  IAuthenticationProvider,
+  HttpContext
 } from "../index";
-import {HttpContext} from "../easy-rest/http/http-context";
 
 export class SimpleApp extends ApplicationInstance {
 
@@ -21,7 +21,11 @@ export class SimpleApp extends ApplicationInstance {
   }
 
   onError(error: any, httpContext: HttpContext) {
-    httpContext.response.status(500).send('Sorry, service temporarily unavailable.');
+    if (!httpContext.response.headersSent) {
+      httpContext.response.status(500);
+      httpContext.response.send('Sorry, service temporarily unavailable.');
+    }
+
     httpContext.next();
   }
 

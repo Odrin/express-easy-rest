@@ -1,5 +1,4 @@
-import { ApplicationInstance } from "../index";
-import { HttpContext } from "../easy-rest/http/http-context";
+import { ApplicationInstance, HttpContext } from "../index";
 export declare class SimpleApp extends ApplicationInstance {
     constructor();
     onRequest(httpContext: HttpContext): void;
