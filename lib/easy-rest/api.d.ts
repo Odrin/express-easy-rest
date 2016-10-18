@@ -8,3 +8,5 @@ export * from './api/action-path-params';
 export * from './api/api-controller';
 export * from './api/controller-dispatcher';
 export * from './api/data-binder';
+export * from './api/model-validator';
+export * from './api/property-validator';

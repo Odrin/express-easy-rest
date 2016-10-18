@@ -17,14 +17,17 @@ import {HttpContext} from "../http/http-context";
 import {HttpControllerDescriptor} from "../http/http-controller-descriptor";
 import {Request} from "express";
 import {HttpActionDescriptor} from "../http/http-action-descriptor";
-import {HttpError} from "../exceptions/api-error";
+import {HttpError} from "../exceptions/http-error";
 import {IExceptionFilterHandler} from "../handlers/exception-filter-handler";
+import {ModelValidator} from "./model-validator";
+import {ModelValidationError} from "../exceptions/model-validation-error";
 
 export class ControllerDispatcher {
   private bindings: IParameterBindingOptions[];
   private authorizationFilter: AuthorizationFilter;
   private returnType: any;
   private exceptionHandler: IExceptionFilterHandler;
+  private dataBinder: DataBinder;
 
   constructor(private instance: ApplicationInstance,
               private controller: IControllerConstructor,
@@ -32,6 +35,7 @@ export class ControllerDispatcher {
 
     this.returnType = Metadata.getReturnType(controller.prototype, action);
     this.bindings = Metadata.get<IParameterBindingOptions[]>(ACTION_BINDINGS_METADATA_KEY, controller.prototype, action) || [];
+    this.dataBinder = new DataBinder(this.bindings, new ModelValidator()); //TODO: DI
 
     if (controller.prototype[action].length !== this.bindings.length) {
       throw new Error(`Binding configuration error: ${action}`);
@@ -66,7 +70,7 @@ export class ControllerDispatcher {
 
       let instance = this.instantiateController(actionContext);
       let action = <Function>(<any>instance)[this.action];
-      let parameters = new DataBinder(req, this.bindings).getParameters();
+      let parameters = this.dataBinder.getParameters(req);
 
       this.applyAction(action, instance, parameters)
         .then((message: ResponseMessage) => {
@@ -93,8 +97,15 @@ export class ControllerDispatcher {
         });
     }
     catch (error) {
-      res.status(500);
-      next(error);
+      //TODO: common error handling, BadRequestError
+      if (error instanceof ModelValidationError) {
+        res.status(400);
+        next(error);
+      }
+      else {
+        res.status(500);
+        next(error);
+      }
     }
   };
 

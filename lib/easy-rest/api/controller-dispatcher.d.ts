@@ -9,6 +9,7 @@ export declare class ControllerDispatcher {
     private authorizationFilter;
     private returnType;
     private exceptionHandler;
+    private dataBinder;
     constructor(instance: ApplicationInstance, controller: IControllerConstructor, action: string);
     handleRequest: (req: express.Request, res: express.Response, next: express.NextFunction) => void;
     private applyAction(action, instance, parameters);

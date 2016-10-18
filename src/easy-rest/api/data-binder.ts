@@ -1,29 +1,35 @@
 import {Request} from "express";
 import {IParameterBindingOptions} from "../decorators/binding/parameter-binding-options";
 import {BindingType} from "../decorators/binding/binding-type";
+import {ModelValidator} from "./model-validator";
+import {ModelValidationError} from "../exceptions/model-validation-error";
 
 export class DataBinder {
-  constructor(
-    private req: Request,
-    private bindings: IParameterBindingOptions[]) {
-
+  constructor(private bindings: IParameterBindingOptions[], private validator: ModelValidator) {
   }
 
-  getParameters(): any[] {
+  getParameters(req: Request): any[] {
     let parameters: any[] = [];
 
     for (let i = 0; i < this.bindings.length; i++) {
       let binding = this.bindings[i];
-      let source = this.getBindingSource(binding.bindingType) || {};
-      let value = this.getBindingValue(source, binding.propertyKey);
+      let source = DataBinder.getBindingSource(req, binding.bindingType) || {};
+      let value = DataBinder.getBindingValue(source, binding.propertyKey);
 
-      parameters[binding.parameterIndex] = this.convertValue(value, binding.dataType);
+      if (this.validator.canValidate(binding.dataType)) {
+        if (!this.validator.isValid(value, binding.dataType)) {
+          //TODO: validation exception
+          throw new ModelValidationError(binding.propertyKey, value);
+        }
+      }
+
+      parameters[binding.parameterIndex] = DataBinder.convertValue(value, binding.dataType);
     }
 
     return parameters;
   }
 
-  convertValue(value: any, dataType: any): any {
+  static convertValue(value: any, dataType: any): any {
     if (dataType === String) {
       return value.toString();
     }
@@ -36,11 +42,10 @@ export class DataBinder {
       return !!value;
     }
 
-    //TODO: input validation
     return value;
   }
 
-  getBindingValue(source: any, propertyKey?: string): any {
+  static getBindingValue(source: any, propertyKey?: string): any {
     if (!propertyKey) {
       return source;
     }
@@ -49,26 +54,16 @@ export class DataBinder {
     }
   }
 
-  getBindingSource(bindingType: BindingType): any {
+  static getBindingSource(req: Request, bindingType: BindingType): any {
     switch (bindingType) {
       case BindingType.body:
-        return this.req.body;
+        return req.body;
 
       case BindingType.route:
-        return this.req.params;
+        return req.params;
 
       default:
         throw new Error(`Unsupported binding type: ${bindingType}`);
     }
-  }
-
-  getParameterBinding(parameterIndex: number): IParameterBindingOptions {
-    for (let i = 0; i < this.bindings.length; i++) {
-      if (this.bindings[i].parameterIndex === parameterIndex) {
-        return this.bindings[i];
-      }
-    }
-
-    throw new Error(`Parameter binding not found: ${parameterIndex}`);
   }
 }

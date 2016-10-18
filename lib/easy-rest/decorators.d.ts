@@ -15,3 +15,8 @@ export * from './decorators/security/authorize';
 export * from './decorators/security/allow-anonymous';
 export * from './decorators/exception-filter/controller-exception-filter';
 export * from './decorators/exception-filter/action-exception-filter';
+export * from './decorators/validation/decorator-factory';
+export * from './decorators/validation/range';
+export * from './decorators/validation/regular-expression';
+export * from './decorators/validation/required';
+export * from './decorators/validation/string-length';

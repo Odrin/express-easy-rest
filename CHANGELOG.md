@@ -11,6 +11,7 @@
 * controller initialization via glob, no more need to list all controllers in ApplicationInstance constructor
 * added http exceptions support - see HttpError
 * ControllerExceptionFilter and ActionExceptionFilter to handle exceptions
+* added model validation functionality - see ModelValidator, @Required(), @StringLength(), @Range(), @RegularExpression()
 
 <a name="0.3.2"></a>
 # [0.3.2](https://github.com/Odrin/express-easy-rest/compare/0.3.1...0.3.2) (2016-08-31)

@@ -45,7 +45,7 @@ You can find more examples [here](src/example).
 * Controller based structure
 * Fast and easy decorators syntax
 * Scalable and customizable architecture
-* It's just a 0.X.X version, so... Lots of features coming soon
+* Model validation
 
 Any coincidence with asp.net WebAPI platform are accidental... or not.
 
