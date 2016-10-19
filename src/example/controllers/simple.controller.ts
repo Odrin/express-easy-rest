@@ -1,5 +1,8 @@
 import {
   ApiController,
+  ControllerExceptionFilter,
+  NotFoundError,
+  HttpActionContext,
   Controller,
   Action,
   FromRoute,
@@ -7,6 +10,7 @@ import {
 } from "../../index";
 
 @Controller({basePath: '/simple'})
+@ControllerExceptionFilter(exceptionHandler)
 export class SimpleController extends ApiController {
 
   constructor() {
@@ -29,4 +33,14 @@ export class SimpleController extends ApiController {
   getError() {
     throw new Error('My test error');
   }
+
+  @Get('/notfound')
+  getNotFoundError() {
+    throw new NotFoundError('I can\'t find what you want');
+  }
+}
+
+function exceptionHandler(context: HttpActionContext, error: any) {
+  context.httpContext.response.status(200).send(`error was suppressed: ${error}`);
+  context.httpContext.next();
 }

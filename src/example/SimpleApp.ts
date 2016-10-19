@@ -2,39 +2,31 @@ import {Request, Response} from "express";
 import {
   ApplicationInstance,
   IPrincipal,
-  IAuthenticationProvider
+  IAuthenticationProvider,
+  HttpContext
 } from "../index";
-import {SimpleController} from "./controllers/simple.controller";
-import {BookController} from "./controllers/book.controller";
-import {UserController} from "./controllers/user.controller";
 
 export class SimpleApp extends ApplicationInstance {
 
   constructor() {
     super();
 
-    this.controllers.push(...[SimpleController, BookController, UserController]);
-    this.requestHandlers.push(this.simpleHandler);
-    this.errorHandlers.push(...[this.simpleErrorHandler1, this.simpleErrorHandler2]);
+    this.controllersPathPattern = __dirname + '/controllers/**/*.js';
     this.authenticationProvider = this.getAuthProvider();
   }
 
-  simpleHandler(req: Request, res: Response): Promise<void> {
+  onRequest(httpContext: HttpContext) {
     console.log('Handle any request here');
-    return Promise.resolve();
+    httpContext.next();
   }
 
-  simpleErrorHandler1(err: any, req: Request, res: Response): Promise<any> {
-    console.log(`Log error: ${err}`);
-    return Promise.resolve(err);
-  }
+  onError(error: any, httpContext: HttpContext) {
+    if (!httpContext.response.headersSent) {
+      httpContext.response.status(500);
+      httpContext.response.send('Sorry, service temporarily unavailable.');
+    }
 
-  simpleErrorHandler2(err: any, req: Request, res: Response): Promise<any> {
-    console.log(`Handle error`);
-
-    res.status(500).send('Sorry, service temporarily unavailable.');
-
-    return Promise.reject(null);
+    httpContext.next();
   }
 
   private getAuthProvider(): IAuthenticationProvider {

@@ -3,7 +3,7 @@ import {IPrincipal} from "../security/principal/principal";
 import {Cache} from "../caching/cache";
 
 export class HttpContext {
-  user: IPrincipal;
+  user: IPrincipal | null;
   cache: Cache;
 
   constructor(private req: Request, private res: Response, private nxt: NextFunction) {

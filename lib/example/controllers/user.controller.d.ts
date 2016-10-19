@@ -1,5 +1,6 @@
 import { ApiController, IActionResult } from "../../index";
-import { Book } from "./book.controller";
+import { Book } from "../models/book";
+import { User } from "../models/user";
 export declare class UserController extends ApiController {
     static books: Book[];
     static users: User[];
@@ -7,8 +8,4 @@ export declare class UserController extends ApiController {
     addBook(id: number): IActionResult;
     signIn(login: string, pwd: string): IActionResult;
     private getUserByLogin(login);
-}
-export declare class User {
-    login: string;
-    pwd: string;
 }

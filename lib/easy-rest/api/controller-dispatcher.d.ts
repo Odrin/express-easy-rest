@@ -8,8 +8,12 @@ export declare class ControllerDispatcher {
     private bindings;
     private authorizationFilter;
     private returnType;
+    private exceptionHandler;
+    private dataBinder;
     constructor(instance: ApplicationInstance, controller: IControllerConstructor, action: string);
     handleRequest: (req: express.Request, res: express.Response, next: express.NextFunction) => void;
+    private applyAction(action, instance, parameters);
+    private defaultExceptionHandler(context, error);
     private handleResult(result);
     private isActionResult(object);
     private handlePromiseResult(result);

@@ -7,6 +7,7 @@ import {
   Post,
   FromBody
 } from "../../index";
+import {Book} from "../models/book";
 
 @Controller({basePath: '/book'})
 export class BookController extends ApiController {
@@ -48,9 +49,4 @@ export class BookController extends ApiController {
 
     return this.ok();
   }
-}
-
-export class Book {
-  id: number;
-  name: string;
 }

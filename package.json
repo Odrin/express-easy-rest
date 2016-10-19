@@ -30,6 +30,7 @@
     "body-parser": "1.x"
   },
   "dependencies": {
+    "glob": "7.x",
     "reflect-metadata": "0.x"
   },
   "devDependencies": {
@@ -46,11 +47,11 @@
     "gulp-tslint": "3.x",
     "jasmine": "2.x",
     "tslint": "3.x",
-    "typescript": "1.x",
+    "typescript": "2.x",
     "typings": "1.x"
   },
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=6.0.0"
   },
   "typings": "./lib/index.d.ts"
 }

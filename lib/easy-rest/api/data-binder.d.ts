@@ -1,13 +1,13 @@
 import { Request } from "express";
 import { IParameterBindingOptions } from "../decorators/binding/parameter-binding-options";
 import { BindingType } from "../decorators/binding/binding-type";
+import { ModelValidator } from "./validation/model-validator";
 export declare class DataBinder {
-    private req;
     private bindings;
-    constructor(req: Request, bindings: IParameterBindingOptions[]);
-    getParameters(): any[];
-    convertValue(value: any, dataType: any): any;
-    getBindingValue(source: any, propertyKey?: string): any;
-    getBindingSource(bindingType: BindingType): any;
-    getParameterBinding(parameterIndex: number): IParameterBindingOptions;
+    private validator;
+    constructor(bindings: IParameterBindingOptions[], validator: ModelValidator);
+    getParameters(req: Request): any[];
+    static convertValue(value: any, dataType: any): any;
+    static getBindingValue(source: any, propertyKey?: string): any;
+    static getBindingSource(req: Request, bindingType: BindingType): any;
 }

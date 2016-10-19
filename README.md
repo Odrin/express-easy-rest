@@ -5,11 +5,7 @@ Simple and easy, [express](https://github.com/expressjs/express/) based, charged
 
 ```TypeScript
 class App extends ApplicationInstance {
-  constructor() {
-      super();
   
-      this.controllers.push(...[BookController]);
-    }
 }
 
 export = new App();
@@ -29,7 +25,7 @@ export class BookController extends ApiController {
 ```
 ```JavaScript
 var express = require('express');
-var app = require('./lib/app');
+var app = require('./app');
 
 express()
   .use('/api', app.middleware())
@@ -40,6 +36,7 @@ express()
 ##Installation
 ```bash
 npm install express-easy-rest
+typings install node express express-serve-static-core serve-static mime
 ```
 
 ##Examples
@@ -49,7 +46,7 @@ You can find more examples [here](src/example).
 * Controller based structure
 * Fast and easy decorators syntax
 * Scalable and customizable architecture
-* It's just a 0.X.X version, so... Lots of features coming soon
+* Model validation
 
 Any coincidence with asp.net WebAPI platform are accidental... or not.
 

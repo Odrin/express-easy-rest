@@ -13,7 +13,7 @@ describe('Path builder spec', () => {
 
   it('should return correct path if only base path specified', () => {
     let basePath = 'controller';
-    let methodPath: string = undefined;
+    let methodPath: string | undefined = undefined;
     let actionName = 'method';
 
     let result = PathBuilder.build(basePath, methodPath, actionName);
@@ -22,7 +22,7 @@ describe('Path builder spec', () => {
   });
 
   it('should return correct path if only method path specified', () => {
-    let basePath: string = undefined;
+    let basePath: string | undefined = undefined;
     let methodPath = 'action';
     let actionName = 'method';
 
@@ -32,8 +32,8 @@ describe('Path builder spec', () => {
   });
 
   it('should return correct path if base path and method path NOT specified', () => {
-    let basePath: string = undefined;
-    let methodPath: string = undefined;
+    let basePath: string | undefined = undefined;
+    let methodPath: string | undefined = undefined;
     let actionName = 'method';
 
     let result = PathBuilder.build(basePath, methodPath, actionName);

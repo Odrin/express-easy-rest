@@ -1,5 +1,5 @@
 import * as express from "express";
-import {IControllerConstructor} from "./api-controller";
+import {IControllerConstructor, ApiController} from "./api-controller";
 import {IParameterBindingOptions} from "../decorators/binding/parameter-binding-options";
 import {DataBinder} from "./data-binder";
 import {IActionResult} from "./action-result/action-result";
@@ -9,7 +9,7 @@ import {ApplicationInstance} from "../core/application-instance";
 import {Metadata} from "../metadata/metadata";
 import {
   ACTION_BINDINGS_METADATA_KEY,
-  AUTH_ROLES_METADATA_KEY,
+  AUTH_ROLES_METADATA_KEY, CONTROLLER_EXCEPTION_FILTER_METADATA_KEY, ACTION_EXCEPTION_FILTER_METADATA_KEY,
 } from "../metadata/metadata-keys";
 import {AuthorizationFilter} from "../security/authorization/authorization-filter";
 import {HttpActionContext} from "../http/http-action-context";
@@ -17,11 +17,17 @@ import {HttpContext} from "../http/http-context";
 import {HttpControllerDescriptor} from "../http/http-controller-descriptor";
 import {Request} from "express";
 import {HttpActionDescriptor} from "../http/http-action-descriptor";
+import {HttpError} from "../exceptions/http-error";
+import {IExceptionFilterHandler} from "../handlers/exception-filter-handler";
+import {ModelValidator} from "./validation/model-validator";
+import {ModelValidationError} from "../exceptions/model-validation-error";
 
 export class ControllerDispatcher {
   private bindings: IParameterBindingOptions[];
   private authorizationFilter: AuthorizationFilter;
   private returnType: any;
+  private exceptionHandler: IExceptionFilterHandler;
+  private dataBinder: DataBinder;
 
   constructor(private instance: ApplicationInstance,
               private controller: IControllerConstructor,
@@ -29,23 +35,31 @@ export class ControllerDispatcher {
 
     this.returnType = Metadata.getReturnType(controller.prototype, action);
     this.bindings = Metadata.get<IParameterBindingOptions[]>(ACTION_BINDINGS_METADATA_KEY, controller.prototype, action) || [];
+    this.dataBinder = new DataBinder(this.bindings, new ModelValidator()); //TODO: DI
 
     if (controller.prototype[action].length !== this.bindings.length) {
       throw new Error(`Binding configuration error: ${action}`);
     }
 
-    let controllerRoles = Metadata.get(AUTH_ROLES_METADATA_KEY, controller);
-    let actionRoles = Metadata.get(AUTH_ROLES_METADATA_KEY, controller.prototype, action);
+    let controllerRoles = Metadata.get<Array<string>>(AUTH_ROLES_METADATA_KEY, controller);
+    let actionRoles = Metadata.get<Array<string>>(AUTH_ROLES_METADATA_KEY, controller.prototype, action);
 
     if (controllerRoles || actionRoles) {
-      let roles = []
+      let roles: Array<string> = [];
+
+      roles
         .concat(controllerRoles || [])
         .concat(actionRoles || [])
-        .filter((value, index, array) => array.indexOf(value) === index);
+        .filter((value: string, index: number, array: Array<string>) => array.indexOf(value) === index);
 
       this.authorizationFilter = instance.getAuthorizationFilter();
       this.authorizationFilter.roles = roles;
     }
+
+    let controllerExceptionHandler = Metadata.get<IExceptionFilterHandler>(CONTROLLER_EXCEPTION_FILTER_METADATA_KEY, controller);
+    let actionExceptionHandler = Metadata.get<IExceptionFilterHandler>(ACTION_EXCEPTION_FILTER_METADATA_KEY, controller.prototype, action);
+
+    this.exceptionHandler = actionExceptionHandler || controllerExceptionHandler || this.defaultExceptionHandler;
   }
 
   handleRequest = (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -58,11 +72,9 @@ export class ControllerDispatcher {
 
       let instance = this.instantiateController(actionContext);
       let action = <Function>(<any>instance)[this.action];
-      let parameters = new DataBinder(req, this.bindings).getParameters();
+      let parameters = this.dataBinder.getParameters(req);
 
-      let result = action.apply(instance, parameters);
-
-      this.handleResult(result) //this.returnType
+      this.applyAction(action, instance, parameters)
         .then((message: ResponseMessage) => {
           res.status(message.statusCode);
 
@@ -76,15 +88,46 @@ export class ControllerDispatcher {
           next();
         })
         .catch((error) => {
-          res.status(500);
-          next(error);
+          if (error instanceof HttpError) {
+            res.status(error.getStatus());
+            res.json(error.getMessage());
+            next(error);
+          }
+          else {
+            this.exceptionHandler(actionContext, error);
+          }
         });
     }
     catch (error) {
-      res.status(500);
-      next(error);
+      //TODO: common error handling, BadRequestError
+      if (error instanceof ModelValidationError) {
+        res.status(400);
+        res.json((<ModelValidationError>error).errors);
+        next(error);
+      }
+      else {
+        res.status(500);
+        next(error);
+      }
     }
   };
+
+  private applyAction(action: Function, instance: ApiController, parameters: any[]) {
+    return new Promise((resolve, reject) => {
+      try {
+        let result = action.apply(instance, parameters);
+        this.handleResult(result).then(resolve, reject);
+      }
+      catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  private defaultExceptionHandler(context: HttpActionContext, error: any) {
+    context.httpContext.response.status(500);
+    context.httpContext.next(error);
+  }
 
   private handleResult(result: IActionResult | ResponseMessage | Promise<any> | any): Promise<ResponseMessage> {
     if (result instanceof Promise) {

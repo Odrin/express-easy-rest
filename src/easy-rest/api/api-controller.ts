@@ -9,7 +9,6 @@ import {Request} from "express";
 
 export class ApiController {
   _context: HttpActionContext;
-  // private _user: IPrincipal;
 
   constructor() {
   }
@@ -18,7 +17,7 @@ export class ApiController {
     return this._context;
   }
 
-  get user(): IPrincipal {
+  get user(): IPrincipal | null {
     return this._context.httpContext.user;
   }
 

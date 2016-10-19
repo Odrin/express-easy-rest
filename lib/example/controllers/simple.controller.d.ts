@@ -4,4 +4,5 @@ export declare class SimpleController extends ApiController {
     hello(name: string): string;
     getObject(name: string): Object;
     getError(): void;
+    getNotFoundError(): void;
 }

@@ -5,10 +5,10 @@ export declare class HttpContext {
     private req;
     private res;
     private nxt;
-    user: IPrincipal;
+    user: IPrincipal | null;
     cache: Cache;
     constructor(req: Request, res: Response, nxt: NextFunction);
-    request: Request;
-    response: Response;
-    next: NextFunction;
+    readonly request: Request;
+    readonly response: Response;
+    readonly next: NextFunction;
 }

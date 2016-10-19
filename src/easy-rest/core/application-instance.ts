@@ -1,6 +1,5 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
-import {IControllerConstructor} from "../api/api-controller";
 import {IControllerOptions} from "../decorators/controller/controller-options";
 import {
   CONTROLLER_OPTIONS_METADATA_KEY,
@@ -10,8 +9,6 @@ import {
 import {IActionOptions} from "../decorators/action/action-options";
 import {PathBuilder} from "../util/path-builder";
 import {ControllerDispatcher} from "../api/controller-dispatcher";
-import {IRequestHandler} from "../handlers/request-handler";
-import {IErrorRequestHandler} from "../handlers/error-request-handler";
 import {Metadata} from "../metadata/metadata";
 import {IAuthenticationProvider} from "../security/authentication/authentication-provider";
 import {DefaultAuthenticationProvider} from "../security/authentication/default-authentication-provider";
@@ -19,22 +16,16 @@ import {HttpContextProvider} from "../util/http-context-provider";
 import {AuthorizationFilter} from "../security/authorization/authorization-filter";
 import {HttpContext} from "../http/http-context";
 import {Cache} from "../caching/cache";
+import {ModuleLoader} from "./module-loader";
 
 export abstract class ApplicationInstance {
   private express: express.Express = express();
 
   /**
-   * Array of controllers used for routing
+   * Path pattern to load controllers. Default: __dirname + /controllers/**&#47;*.js
    */
-  controllers: IControllerConstructor[] = [];
-  /**
-   * Array of request request handlers that will be called before request routing
-   */
-  requestHandlers: IRequestHandler[] = [];
-  /**
-   * Array of global api application error request handlers
-   */
-  errorHandlers: IErrorRequestHandler[] = [];
+  controllersPathPattern: string = __dirname + '/controllers/**/*.js';
+
   /**
    * Array of body parsers. Default is single json body parser.
    * @see {@link http://expressjs.com/en/4x/api.html#req.body}
@@ -49,12 +40,13 @@ export abstract class ApplicationInstance {
   }
 
   middleware(): express.Express {
+    this.loadModules();
     this.initializeContext();
-    this.configHandlers();
+    this.configRequestHandler();
     this.configParsers();
     this.configAuthProvider();
     this.configRouter();
-    this.configErrorHandlers();
+    this.configErrorHandler();
 
     return this.express;
   }
@@ -65,6 +57,34 @@ export abstract class ApplicationInstance {
    */
   getAuthorizationFilter() {
     return new AuthorizationFilter();
+  }
+
+  /**
+   * Override for custom global request handling.
+   * Don't forget about next()
+   * @param httpContext
+   */
+  onRequest(httpContext: HttpContext) {
+    httpContext.next();
+  }
+
+  /**
+   * Override for custom global error handling
+   * Don't forget about next()
+   * @param error
+   * @param httpContext
+   */
+  onError(error: any, httpContext: HttpContext) {
+    if (!httpContext.response.headersSent) {
+      httpContext.response.status(500);
+      httpContext.response.json(error);
+    }
+
+    httpContext.next(error);
+  }
+
+  private loadModules() {
+    ModuleLoader.load(this.controllersPathPattern);
   }
 
   private initializeContext() {
@@ -106,26 +126,14 @@ export abstract class ApplicationInstance {
     }
   }
 
-  private configHandlers() {
+  private configRequestHandler() {
     //TODO: fix
     //noinspection TypeScriptValidateTypes
     this.express.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-      if (this.requestHandlers.length === 0) {
-        return next();
-      }
-
       try {
-        let promise: Promise<void> = Promise.resolve();
+        let httpContext = HttpContextProvider.getContext(req);
 
-        for (let i = 0; i < this.requestHandlers.length; i++) {
-          let handler = this.requestHandlers[i];
-
-          promise = promise.then(() => handler(req, res));
-        }
-
-        promise
-          .then(() => next())
-          .catch((error) => next(error));
+        this.onRequest(httpContext);
       }
       catch (error) {
         next(error);
@@ -133,26 +141,14 @@ export abstract class ApplicationInstance {
     });
   }
 
-  private configErrorHandlers() {
+  private configErrorHandler() {
     //TODO: fix
     //noinspection TypeScriptValidateTypes
     this.express.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-      if (this.errorHandlers.length === 0) {
-        return next(err);
-      }
-
       try {
-        let promise: Promise<void> = Promise.resolve(err);
+        let httpContext = HttpContextProvider.getContext(req);
 
-        for (let i = 0; i < this.errorHandlers.length; i++) {
-          let handler = this.errorHandlers[i];
-
-          promise.then((error) => handler(error, req, res));
-        }
-
-        promise
-          .then((error) => next(error))
-          .catch((error) => next());
+        this.onError(err, httpContext);
       }
       catch (error) {
         next(error);
@@ -161,7 +157,9 @@ export abstract class ApplicationInstance {
   }
 
   private configRouter() {
-    for (let controller of this.controllers) {
+    let controllers = ModuleLoader.controllers;
+
+    for (let controller of controllers) {
       let ctrlOptions = Metadata.get<IControllerOptions>(CONTROLLER_OPTIONS_METADATA_KEY, controller) || {}; //TODO: Controller options defaults
       let actions = Metadata.get<string[]>(ACTION_DECLARATION_METADATA_KEY, controller.prototype);
 

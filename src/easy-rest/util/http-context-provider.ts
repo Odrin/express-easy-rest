@@ -8,8 +8,7 @@ export class HttpContextProvider {
     let context: HttpContext = (<any>req)[HttpContextProvider.HTTP_CONTEXT_KEY];
 
     if (!context) {
-      console.warn(`Http context is not available. Perhaps it wasn't yet initialized`);
-      return null;
+      throw new Error(`Http context is not available. Perhaps it wasn't yet initialized`);
     }
 
     return context;

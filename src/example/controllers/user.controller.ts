@@ -1,4 +1,5 @@
 import {
+  Controller,
   ApiController,
   IActionResult,
   FromBody,
@@ -7,9 +8,12 @@ import {
   Authorize,
   AllowAnonymous
 } from "../../index";
-import {Book, BookController} from "./book.controller";
+import {BookController} from "./book.controller";
+import {Book} from "../models/book";
+import {User} from "../models/user";
 
 @Authorize('user')
+@Controller()
 export class UserController extends ApiController {
   static books: Book[] = [
     {id: 2, name: 'book 2'},
@@ -73,9 +77,4 @@ export class UserController extends ApiController {
 
     return null;
   }
-}
-
-export class User {
-  login: string;
-  pwd: string;
 }

@@ -1,23 +1,22 @@
 import * as express from "express";
-import { IControllerConstructor } from "../api/api-controller";
-import { IRequestHandler } from "../handlers/request-handler";
-import { IErrorRequestHandler } from "../handlers/error-request-handler";
 import { IAuthenticationProvider } from "../security/authentication/authentication-provider";
 import { AuthorizationFilter } from "../security/authorization/authorization-filter";
+import { HttpContext } from "../http/http-context";
 export declare abstract class ApplicationInstance {
     private express;
-    controllers: IControllerConstructor[];
-    requestHandlers: IRequestHandler[];
-    errorHandlers: IErrorRequestHandler[];
+    controllersPathPattern: string;
     parsers: express.RequestHandler[];
     authenticationProvider: IAuthenticationProvider;
     constructor();
     middleware(): express.Express;
     getAuthorizationFilter(): AuthorizationFilter;
+    onRequest(httpContext: HttpContext): void;
+    onError(error: any, httpContext: HttpContext): void;
+    private loadModules();
     private initializeContext();
     private configAuthProvider();
     private configParsers();
-    private configHandlers();
-    private configErrorHandlers();
+    private configRequestHandler();
+    private configErrorHandler();
     private configRouter();
 }

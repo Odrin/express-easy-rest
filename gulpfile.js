@@ -39,7 +39,8 @@ gulp.task('_build', 'INTERNAL TASK - Compiles all TypeScript source files', func
 });
 
 gulp.task('build', 'Compiles all TypeScript source files and updates module references', function (callback) {
-  gulpSequence('tslint', 'clean', '_build')(callback);
+  // gulpSequence('tslint', 'clean', '_build')(callback);
+  gulpSequence('clean', '_build')(callback); //TODO: tslint
 });
 
 gulp.task('test', 'Runs the Jasmine test specs', ['build'], function () {
