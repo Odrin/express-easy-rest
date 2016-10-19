@@ -102,6 +102,7 @@ export class ControllerDispatcher {
       //TODO: common error handling, BadRequestError
       if (error instanceof ModelValidationError) {
         res.status(400);
+        res.json((<ModelValidationError>error).errors);
         next(error);
       }
       else {
