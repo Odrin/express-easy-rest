@@ -1,7 +1,7 @@
 import {ActionPathParam} from "../api/action-path-params";
 
 export class PathBuilder {
-  static build(basePath: string, methodPath: ActionPathParam, action: string): ActionPathParam {
+  static build(basePath: string | undefined, methodPath: ActionPathParam | undefined, action: string): ActionPathParam {
     if (basePath && methodPath && typeof (methodPath) !== 'string') {
       throw new Error(`Path builder error: incompatible types`);
     }

@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import {ModelValidator} from "../../easy-rest/api/model-validator";
+import {ModelValidator} from "../../easy-rest/api/validation/model-validator";
 import {Required} from "../../easy-rest/decorators/validation/required";
 import {StringLength} from "../../easy-rest/decorators/validation/string-length";
 
@@ -30,14 +30,14 @@ describe('ModelValidator spec', () => {
     });
   });
 
-  describe('isValid method', () => {
+  describe('validate method', () => {
     it('should return false if model is not valid', () => {
       let model = new ValidateModel();
       model.string = '123456';
 
-      let isValid = validator.isValid(model, ValidateModel);
+      let result = validator.validate(model, ValidateModel);
 
-      expect(isValid).toBeFalsy();
+      expect(result.valid).toBeFalsy();
     });
 
     it('should return true if model is valid', () => {
@@ -45,9 +45,9 @@ describe('ModelValidator spec', () => {
       model.required = 'required';
       model.string = '12345';
 
-      let isValid = validator.isValid(model, ValidateModel);
+      let result = validator.validate(model, ValidateModel);
 
-      expect(isValid).toBeTruthy();
+      expect(result.valid).toBeTruthy();
     });
   });
 });

@@ -1,5 +1,5 @@
 export interface IIdentity {
-    authenticationType: string;
     isAuthenticated: boolean;
-    name: string;
+    authenticationType: string | undefined | null;
+    name: string | undefined | null;
 }

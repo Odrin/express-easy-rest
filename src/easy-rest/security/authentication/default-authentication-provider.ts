@@ -11,7 +11,7 @@ export class DefaultAuthenticationProvider implements IAuthenticationProvider {
         name: null,
         authenticationType: null
       },
-      isInRole(role: string) {
+      isInRole(role: string): boolean {
         return false;
       }
     });

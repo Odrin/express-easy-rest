@@ -1,7 +1,7 @@
 import { Request } from "express";
 import { IParameterBindingOptions } from "../decorators/binding/parameter-binding-options";
 import { BindingType } from "../decorators/binding/binding-type";
-import { ModelValidator } from "./model-validator";
+import { ModelValidator } from "./validation/model-validator";
 export declare class DataBinder {
     private bindings;
     private validator;

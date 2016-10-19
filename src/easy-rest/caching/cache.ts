@@ -3,7 +3,7 @@ import {CacheItemRemovedReason} from "./cache-item-removed-reason";
 import {ICacheItemPolicy} from "./cache-item-policy";
 import {CacheItemRemovedEventEmitter} from "./cache-item-removed-event-emitter";
 
-let instance: Cache = null;
+let instance: Cache | null = null;
 
 //TODO: memory usage https://nodejs.org/api/process.html#process_process_memoryusage
 export class Cache {
@@ -117,7 +117,7 @@ export class Cache {
    * @param key - The identifier for the cache item to retrieve
    * @return {T} A reference to the cache entry that is identified by key, if the entry exists; otherwise, null.
    */
-  get<T>(key: string): T {
+  get<T>(key: string): T | null {
     let item: CacheItem<T> = this._map.get(key);
 
     if (typeof (item) === 'undefined') {

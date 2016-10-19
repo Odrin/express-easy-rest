@@ -1,7 +1,8 @@
 import {ApplicationError} from "./application-error";
+import {IPropertyValidationResult} from "../api/validation/property-validation-result";
 
 export class ModelValidationError extends ApplicationError {
-  constructor(public key: string, value: any) {
-    super(`Model validation error: ${key}:${JSON.stringify(value)}`);
+  constructor(public errors: Array<IPropertyValidationResult>) {
+    super(`Model validation error: ${JSON.stringify(errors)}`);
   }
 }

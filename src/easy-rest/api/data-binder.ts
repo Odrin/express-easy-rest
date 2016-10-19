@@ -1,7 +1,7 @@
 import {Request} from "express";
 import {IParameterBindingOptions} from "../decorators/binding/parameter-binding-options";
 import {BindingType} from "../decorators/binding/binding-type";
-import {ModelValidator} from "./model-validator";
+import {ModelValidator} from "./validation/model-validator";
 import {ModelValidationError} from "../exceptions/model-validation-error";
 
 export class DataBinder {
@@ -17,9 +17,10 @@ export class DataBinder {
       let value = DataBinder.getBindingValue(source, binding.propertyKey);
 
       if (this.validator.canValidate(binding.dataType)) {
-        if (!this.validator.isValid(value, binding.dataType)) {
-          //TODO: validation exception
-          throw new ModelValidationError(binding.propertyKey, value);
+        let validationResult = this.validator.validate(value, binding.dataType);
+
+        if (!validationResult.valid) {
+          throw new ModelValidationError(validationResult.errors);
         }
       }
 

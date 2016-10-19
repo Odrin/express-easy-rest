@@ -1,5 +1,4 @@
-import {Required} from "../../index";
-import {StringLength} from "../../easy-rest/decorators/validation/string-length";
+import {Required, StringLength} from "../../index";
 
 export class User {
   @Required()

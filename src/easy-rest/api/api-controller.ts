@@ -17,7 +17,7 @@ export class ApiController {
     return this._context;
   }
 
-  get user(): IPrincipal {
+  get user(): IPrincipal | null {
     return this._context.httpContext.user;
   }
 

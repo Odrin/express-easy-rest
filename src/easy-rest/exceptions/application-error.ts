@@ -1,5 +1,5 @@
 export abstract class ApplicationError extends Error {
-  constructor(public message?: string) {
+  constructor(message?: string) {
     super(message);
   }
 }

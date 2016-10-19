@@ -6,18 +6,27 @@ export function StringLength(maxLength: number, minLength?: number): PropertyDec
   }
 
   return decoratorFactory((value: any) => {
-    if (typeof value !== 'string') {
-      return false;
-    }
+    let valid = validate(value, maxLength, minLength);
 
-    if (!!minLength && (!value || (<string>value).length < minLength )) {
-      return false;
-    }
-
-    if (value && (<string>value).length > maxLength) {
-      return false;
-    }
-
-    return true;
+    return {
+      valid,
+      error: !valid ? 'Input string does not match specific length' : undefined
+    };
   });
+}
+
+function validate(value: any, maxLength: number, minLength?: number): boolean {
+  if (typeof value !== 'string') {
+    return false;
+  }
+
+  if (!!minLength && (!value || (<string>value).length < minLength )) {
+    return false;
+  }
+
+  if (value && (<string>value).length > maxLength) {
+    return false;
+  }
+
+  return true;
 }

@@ -1,14 +1,29 @@
 export class Metadata {
   static has(metadataKey: any, target: Object, targetKey?: string | symbol): boolean {
-    return Reflect.hasMetadata(metadataKey, target, targetKey);
+    if (targetKey) {
+      return Reflect.hasMetadata(metadataKey, target, targetKey);
+    }
+    else {
+      return Reflect.hasMetadata(metadataKey, target);
+    }
   }
 
   static get<T>(metadataKey: any, target: Object, targetKey?: string | symbol): T {
-    return Reflect.getMetadata(metadataKey, target, targetKey);
+    if (targetKey) {
+      return Reflect.getMetadata(metadataKey, target, targetKey);
+    }
+    else {
+      return Reflect.getMetadata(metadataKey, target);
+    }
   }
 
   static define(metadataKey: any, metadataValue: any, target: Object, targetKey?: string | symbol) {
-    Reflect.defineMetadata(metadataKey, metadataValue, target, targetKey);
+    if (targetKey) {
+      Reflect.defineMetadata(metadataKey, metadataValue, target, targetKey);
+    }
+    else {
+      Reflect.defineMetadata(metadataKey, metadataValue, target);
+    }
   }
 
   static append<T>(metadataKey: any, metadataValue: T, target: Object, targetKey?: string | symbol) {

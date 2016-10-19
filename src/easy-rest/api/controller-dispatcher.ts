@@ -19,7 +19,7 @@ import {Request} from "express";
 import {HttpActionDescriptor} from "../http/http-action-descriptor";
 import {HttpError} from "../exceptions/http-error";
 import {IExceptionFilterHandler} from "../handlers/exception-filter-handler";
-import {ModelValidator} from "./model-validator";
+import {ModelValidator} from "./validation/model-validator";
 import {ModelValidationError} from "../exceptions/model-validation-error";
 
 export class ControllerDispatcher {
@@ -41,14 +41,16 @@ export class ControllerDispatcher {
       throw new Error(`Binding configuration error: ${action}`);
     }
 
-    let controllerRoles = Metadata.get(AUTH_ROLES_METADATA_KEY, controller);
-    let actionRoles = Metadata.get(AUTH_ROLES_METADATA_KEY, controller.prototype, action);
+    let controllerRoles = Metadata.get<Array<string>>(AUTH_ROLES_METADATA_KEY, controller);
+    let actionRoles = Metadata.get<Array<string>>(AUTH_ROLES_METADATA_KEY, controller.prototype, action);
 
     if (controllerRoles || actionRoles) {
-      let roles = []
+      let roles: Array<string> = [];
+
+      roles
         .concat(controllerRoles || [])
         .concat(actionRoles || [])
-        .filter((value, index, array) => array.indexOf(value) === index);
+        .filter((value: string, index: number, array: Array<string>) => array.indexOf(value) === index);
 
       this.authorizationFilter = instance.getAuthorizationFilter();
       this.authorizationFilter.roles = roles;

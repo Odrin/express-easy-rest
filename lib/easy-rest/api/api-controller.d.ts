@@ -5,9 +5,9 @@ import { Request } from "express";
 export declare class ApiController {
     _context: HttpActionContext;
     constructor();
-    context: HttpActionContext;
-    user: IPrincipal;
-    request: Request;
+    readonly context: HttpActionContext;
+    readonly user: IPrincipal | null;
+    readonly request: Request;
     protected ok<T>(data?: any): IActionResult;
     protected error<T>(data?: any): IActionResult;
     protected badRequest<T>(data?: any): IActionResult;
