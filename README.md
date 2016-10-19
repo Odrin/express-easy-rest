@@ -36,6 +36,7 @@ express()
 ##Installation
 ```bash
 npm install express-easy-rest
+typings install node express express-serve-static-core serve-static mime
 ```
 
 ##Examples
