@@ -1,7 +1,5 @@
 <a name="1.0.0"></a>
-# [1.0.0](https://github.com/Odrin/express-easy-rest/compare/1.0.0...0.3.1) (2016-xx-xx)
-
-### Bug Fixes
+# [1.0.0](https://github.com/Odrin/express-easy-rest/compare/1.0.0...0.3.1) (2016-10-19)
 
 ### Code Refactoring
 * ApplicationInstance.errorHandlers replaced by single global onError() handler
