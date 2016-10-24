@@ -1,3 +1,4 @@
+/// <reference types="express" />
 import { Request } from "express";
 import { IParameterBindingOptions } from "../decorators/binding/parameter-binding-options";
 import { BindingType } from "../decorators/binding/binding-type";

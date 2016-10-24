@@ -1,3 +1,4 @@
+/// <reference types="express" />
 import { Request, Response, NextFunction } from "express";
 import { IPrincipal } from "../security/principal/principal";
 import { Cache } from "../caching/cache";

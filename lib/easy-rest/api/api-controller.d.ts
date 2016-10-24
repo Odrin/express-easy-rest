@@ -1,3 +1,4 @@
+/// <reference types="express" />
 import { IActionResult } from "./action-result/action-result";
 import { IPrincipal } from "../security/principal/principal";
 import { HttpActionContext } from "../http/http-action-context";

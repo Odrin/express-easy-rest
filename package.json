@@ -1,6 +1,6 @@
 {
   "name": "express-easy-rest",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "express-easy-rest",
   "license": "MIT",
   "repository": {
@@ -30,6 +30,15 @@
     "body-parser": "1.x"
   },
   "dependencies": {
+    "@types/body-parser": "0.0.33",
+    "@types/express": "4.x.x",
+    "@types/express-serve-static-core": "4.x.x",
+    "@types/glob": "5.x.x",
+    "@types/jasmine": "2.x.x",
+    "@types/mime": "0.0.29",
+    "@types/node": "6.x.x",
+    "@types/reflect-metadata": "0.0.5",
+    "@types/serve-static": "1.x.x",
     "glob": "7.x",
     "reflect-metadata": "0.x"
   },
@@ -47,8 +56,7 @@
     "gulp-tslint": "3.x",
     "jasmine": "2.x",
     "tslint": "3.x",
-    "typescript": "2.x",
-    "typings": "1.x"
+    "typescript": "2.x"
   },
   "engines": {
     "node": ">=6.0.0"

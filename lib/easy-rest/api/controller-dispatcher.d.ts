@@ -1,3 +1,4 @@
+/// <reference types="express" />
 import * as express from "express";
 import { IControllerConstructor } from "./api-controller";
 import { ApplicationInstance } from "../core/application-instance";

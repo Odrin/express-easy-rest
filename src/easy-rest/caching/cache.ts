@@ -118,7 +118,7 @@ export class Cache {
    * @return {T} A reference to the cache entry that is identified by key, if the entry exists; otherwise, null.
    */
   get<T>(key: string): T | null {
-    let item: CacheItem<T> = this._map.get(key);
+    let item: CacheItem<T> | undefined = this._map.get(key);
 
     if (typeof (item) === 'undefined') {
       return null;
