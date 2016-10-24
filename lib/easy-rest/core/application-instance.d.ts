@@ -1,3 +1,4 @@
+/// <reference types="express" />
 import * as express from "express";
 import { IAuthenticationProvider } from "../security/authentication/authentication-provider";
 import { AuthorizationFilter } from "../security/authorization/authorization-filter";

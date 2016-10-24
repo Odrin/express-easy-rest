@@ -1,3 +1,4 @@
+/// <reference types="express" />
 import { Request } from "express";
 import { HttpContext } from "../http/http-context";
 export declare class HttpContextProvider {

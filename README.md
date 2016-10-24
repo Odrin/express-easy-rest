@@ -36,7 +36,21 @@ express()
 ##Installation
 ```bash
 npm install express-easy-rest
-typings install node express express-serve-static-core serve-static mime
+```
+
+##Simple tsconfog.json
+```JavaScript
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "./lib",
+    "noImplicitAny": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
+}
 ```
 
 ##Examples
