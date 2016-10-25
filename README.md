@@ -38,7 +38,7 @@ express()
 npm install express-easy-rest
 ```
 
-##Simple tsconfog.json
+##Simple tsconfig.json
 ```JavaScript
 {
   "compilerOptions": {
